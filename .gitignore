@@ -1,1 +1,6 @@
 # here we are going to put the non wanted files
+references
+.swp
+.tmp
+.bbl
+.log

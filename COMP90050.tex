@@ -1,0 +1,144 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Simple Sectioned Essay Template
+% LaTeX Template
+%
+% This template has been downloaded from:
+% http://www.latextemplates.com
+%
+% Modified by : Ivan Patricio Valarezo (c) patovala@pupilabox.net.ec
+%               The University of Melbourne - MSSE
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Why don't put the commands to compile this??
+% PV: To compile the bibfile: bibtex COMP90050, then use the command \ll as usual 
+%     from the vim environment
+% 
+%------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%------------------------------------------------------------------------------------
+
+\documentclass[10pt]{article} % Default font size is 12pt, it can be changed here
+
+\usepackage{geometry} % Required to change the page size to A4
+\geometry{a4paper} % Set the page size to be A4 as opposed to the default US Letter
+
+\usepackage{graphicx} % Required for including pictures
+
+\usepackage{float} % Allows putting an [H] in \begin{figure} to specify the exact location of the figure
+\usepackage{wrapfig} % Allows in-line images such as the example fish picture
+
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\usepackage{url} % url package
+
+\usepackage{apacite} % citations style apa 
+
+\usepackage{longtable} % long tables breaking on each page 
+
+\linespread{1.2} % Line spacing
+
+%\setlength\parindent{0pt} % Uncomment to remove all indentation from paragraphs
+
+\graphicspath{{./pictures/}} % Specifies the directory where pictures are stored
+
+\begin{document}
+
+%------------------------------------------------------------------------------------
+%	TITLE PAGE
+%------------------------------------------------------------------------------------
+
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+
+\center % Center everything on the page
+
+\textsc{\LARGE University of Melbourne}\\[1.5cm] % Name of your university/college
+\textsc{\Large Advanced Database Systems}\\[0.5cm] % Major heading such as course name
+\textsc{\large COMP90050}\\[0.5cm] % Minor heading such as course title
+
+\HRule \\[0.4cm]
+{ \huge \bfseries In Memory Database Management Systems}\\[0.4cm] % Title of your document
+\HRule \\[1.5cm]
+
+\begin{minipage}{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Authors:}\\
+Ivan Patricio \textsc{Valarezo} % Your name
+\end{flushleft}
+\end{minipage}
+~
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+%\emph{id:} \\ % I want to put my id here
+ID: \textsc{601099} % 
+\end{flushright}
+\end{minipage}\\[4cm]
+
+{\large \today}\\[3cm] % Date, change the \today to a set date if you want to be precise
+
+%\includegraphics{Logo}\\[1cm] % Include a department/university logo - this will require the graphicx package
+
+\vfill % Fill the rest of the page with whitespace
+
+\end{titlepage}
+
+
+%------------------------------------------------------------------------------------
+%	MY PERSONAL REFERENCE SECTION
+%------------------------------------------------------------------------------------
+% Pato, put here all the things, tips, references, etc, that you think you'll use in the
+% future.
+%
+% how to cite according to the UNIMELB http://www.library.unimelb.edu.au/cite/
+
+
+%------------------------------------------------------------------------------------
+%	TABLE OF CONTENTS
+%------------------------------------------------------------------------------------
+
+\newpage % Begins the essay on a new page instead of on the same page as the table of contents 
+
+%------------------------------------------------------------------------------------
+%	INTRODUCTION
+%------------------------------------------------------------------------------------
+\begin{abstract}
+
+Here we need to put the abstract of the work done.
+ 
+\end{abstract}
+
+
+\section{Introduction} 
+
+The main Introduction.
+
+%------------------------------------------------------------------------------------
+%	Background and Analysis <-- TODO: is the name for this section accurate? 
+%------------------------------------------------------------------------------------
+% Let's talk about the main topic in terms of three major parts:
+% - Data Organization
+% - Query Processing
+% - Data Recovery
+
+\section{Background and Analysis} 
+\subsection{Concepts}
+Do we need to put concepts, I've found a good source from (\citeA{Kemper})
+
+\subsection{Technology awareness}
+Let's put here something related with the main concerns that leads to this emerging technology.   
+
+\subsection{IMDB Data Organization}
+\subsubsection{Column-Store Database System}
+Is a good idea to do this for IMDB?. I have some articles in \cite{ColumnOriented} and in \cite{ColumnOriented1}
+\subsection{IMDB Query Processing}
+\subsection{IMDB Data Recovery}
+
+%------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%------------------------------------------------------------------------------------
+
+\bibliographystyle{apacite}
+\bibliography{bibfile}
+%------------------------------------------------------------------------------------
+\end{document}
