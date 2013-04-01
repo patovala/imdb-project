@@ -126,7 +126,13 @@ The main Introduction.
 We need to put concepts, I've found a good source from (\citeA{Kemper})
 
 \subsection{Technology awareness}
-Let's put here something related with the main concerns that leads to this emerging technology.   
+Let's put here something related with the main concerns that leads to this emerging technology. Also, its important to be aware that the ACID properties of DB Systems should be contrasted. In terms of each one of its meanings.
+
+\begin{description}
+    % this ideas are collected from Kemper
+  \item[Atomicity] In order to achieve atomicity, the IMDB should be able to handle the effects of unsuccessful transactions. In general terms, the problem has to explicitly with the data existent in the volatile memory, since all successful transaction are in a successful state only after been committed to the logging infrastructure. % <-- PV remember, atomicity is all or nothing.
+  \item[Durability] It is clear that during a failure, the IMDB Systems has the most obvious disadvantage, (without mention the hardware based solutions like batteries and so on), so the effects of a commit must be restored on a failure, this is the principle of Durability of course. One of the ideas to accomplish this is use \emph{ redo Logging }. %<-- PV important, should be more, worth to investigate 
+\end{description}
 
 \subsection{IMDB Data Organization}
 \subsubsection{Column-Store Database System}
@@ -134,9 +140,14 @@ Is a good idea to do this for IMDB?. I have some articles in \cite{ColumnOriente
 \subsection{IMDB Query Processing}
 \subsection{IMDB Data Recovery}
 
+% PV: stupid idea: the memory comsumption is high since IDBM is memory based, but, OS Systems like Unix uses as much memory as they can in order to be more efficient, after coping all the memory, they start to swap and problems like trashing could happen.
+% PV: stupid idea2: In a computer, all the memory has to be used because is already payed, the resource is there so take as much memory as you can.
+
 % This is the point about conclusions and future directions
 \section{Conclusions} 
-The conclusions,
+The conclusions.
+
+We could talk about: \emph{ MonetDB }, \emph{ VoltDB }
 
 
 %------------------------------------------------------------------------------------
