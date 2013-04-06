@@ -136,7 +136,18 @@ Let's put here something related with the main concerns that leads to this emerg
 
 \subsection{IMDB Data Organization}
 \subsubsection{Column-Store Database System}
-Is a good idea to do this for IMDB?. I have some articles in \cite{ColumnOriented} and in \cite{ColumnOriented1}
+Is a good idea to do this for IMDB?. I have some articles in \cite{ColumnOriented} and in \cite{ColumnOriented1}.
+
+From \cite{Plattner}, it seems that although more memory has been always useful, the database systems for OLTP where not well adopted in parallel environments, one of the reasons of this were problems like deadlocks and temporary locking in parallel transactions. So in general terms has not been a good idea.
+
+Also from \cite{Plattner}, initial tests regarding in-memory databases using relational type based on \emph{ row storage } has not shown notable performance over RDBMSs. The opportunity for \emph{column based storage} now raises due the abundant availability of main memory. 
+
+Some of the main advantages of Column Storage worth to mention:
+\begin{itemize}
+    \item Column Storage performs outstanding on modern CPUS (see \cite{Plattner})
+    \item The vertical compression along columns is more efficient.
+
+
 \subsection{IMDB Query Processing}
 \subsection{IMDB Data Recovery}
 
