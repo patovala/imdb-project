@@ -134,6 +134,15 @@ Let's put here something related with the main concerns that leads to this emerg
   \item[Durability] It is clear that during a failure, the IMDB Systems has the most obvious disadvantage, (without mention the hardware based solutions like batteries and so on), so the effects of a commit must be restored on a failure, this is the principle of Durability of course. One of the ideas to accomplish this is use \emph{ redo Logging }. %<-- PV important, should be more, worth to investigate 
 \end{description}
 
+\subsection{The OLTP and OLAP Systems}
+% PV TODO: I think that we need to put something from OLTP and OLAP, there is something related in in Plattner:
+The transactional processing part of a system OLTP (Online Transaction Processing) defines a Database system oriented to the day to day work. Almost all systems (Financial, Manufacturing, Sales, etc) rely on transactions to perform their goals. On the other hand, systems for desition taking, analytical and planning in general has been isolated from OLTPs toward especialized systems called OLAP (Online Analiytical Processing).
+
+The main purposes of this separation could be generalized into \emph{ performance } and maybe \emph{technical} issues. Even though both systems keep the esscence in terms of relational theory, there are some important differences between them \cite{Plattner}.
+
+% PV TODO: maybe we need to elaborate a little more about this.
+
+
 \subsection{IMDB Data Organization}
 \subsubsection{Column-Store Database System}
 Is a good idea to do this for IMDB?. I have some articles in \cite{ColumnOriented} and in \cite{ColumnOriented1}.
