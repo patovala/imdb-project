@@ -58,15 +58,15 @@
 \textsc{\large COMP90050}\\[0.5cm] % Minor heading such as course title
 
 \HRule \\[0.4cm]
-{ \huge \bfseries In Memory Database Management Systems}\\[0.4cm] % Title of your document
+{ \huge \bfseries Main Memory Database Management Systems}\\[0.4cm] % Title of your document
 \HRule \\[1.5cm]
 
 \begin{minipage}{0.4\textwidth}
 \begin{flushleft} \large
 \emph{Authors:}\\
 Hammad \\
+Iván Patricio \textsc{Valarezo}\\ % Your name
 Saman \\
-Ivan Patricio \textsc{Valarezo}\\ % Your name
 \end{flushleft}
 \end{minipage}
 ~
@@ -137,81 +137,86 @@ Let's put here something related with the main concerns that leads to this emerg
 \end{description}
 
 
-% New content added from the new task splitted between our team mates:
+% IVAN: New content added from the new task split between our team mates:
 % - My part begins with Indexing, this is not part of the data organization??, yes so I shall start with data organization.
 % - Actually it is, because we have organized the structure as this document know explains, follow this document structure please.
 \section{Data Organization}
 
-Relational Databases have been the backbone of business applications for more    than 20 years, trying to provide companies with a management information system for a set of applications. During all this time, we have dreamed with the possibility of having all the information at our fingertip, we even have sold this idea\cite{Plattner}.
+Relational Databases have been the backbone of business applications for more  than 20 years, trying to provide companies with a management information system for a set of applications. During all this time, we have dreamed with the possibility of having all the information at our fingertip, we even have sold this idea\cite{Plattner}.
 
     But due to many reasons, we have not been able to offer this. And our systems have been separated in two main different groups: The online transaction processing (OLTP) and on line analytical processing (OLAP).
 
 \subsection{OLTP and OLAP}
     % from \cite{Kemper}
-    Under the OLTP classification, could be grouped systems with a high rate of mission-critical transactions, most of the database systems (as we know them) are mainly used for transaction processing. Some examples of OLTP systems are financial, sales, Manufacturing, order entry, banking transaction processing, human resources. All this systems performs relatively well mainly because they work on a small portion of the data. The TCP-C benchmark publish an average processing of 100.000 such sales transactions per second on a powerful system \cite{Kemper}.
+    Under the OLTP classification, could be grouped systems with a high rate of day to day transactions, most of the database systems (as we know them) are mainly used for transaction processing. Some examples of OLTP systems are financial, sales, Manufacturing, order entry, banking transaction processing, human resources. All this systems performs relatively well mainly because they work on a small portion of the data. The TCP-C benchmark publish an average processing of 100.000 such sales transactions per second on a powerful system \cite{Kemper}.
     
     On the other hand, analytical, business intelligence and financial planning application were moved out to separated systems (for more flexibility and better performance). The OLAP Systems could be aimed toward specific task related to the company data warehousing. 
     
-    Even though, this solutions are different in context, both are still based on \emph{ Relational theory } but with different technical approaches. 
+    Even though, this solutions are different in context, both are still based on \emph{ Relational theory } but with different technical approaches. The main purposes of this separation could be generalized into \emph{ performance } and maybe \emph{technical} issues. Even though both systems keep the essence in terms of relational theory, there are some important differences between them \cite{Plattner}.
+
     Moreover, recent development in the field of OLAP and the increased availability of main memory (sufficient enough to hold a completed compressed database) have enabled the processing of complex analytical requests in a fraction of a second and thus ease the development of new business processes and applications. The next step seems obviously to undo the separation between OLTP and OLAP and all requests be handled on a combined data set.
 
     %TODO: should I keep adding more info here? we can still talk about OLAP cubes, etc
 
     Now that the main memory is abundant, we have gone back to see the possibility of having a all-in-one MMDB. SAP\footnote{SAP AG: A German multinational software corporation that makes enterprise software to manage business operations and customer relations.} is one of the most enthusiastic companies pushing the use of Main Memory Databases for a mixed OLTP \& OLAP environment \cite{Plattner}, the company advertises SAP HANA as a generic MMDB solutions. 
     
-    The MMDB Structure For these, the Main Memory Database Systems improve two critical points: Indexing and Storage
+    In this direction, it is suitable to estimate the challenges toward this join in technical perspectives, specifically, we have defined two main critical points related to data organization: The improved MMDB indexing system and the data Storage.
 
     
-\subsection{Indexing}
-Although, the performance observed in a MMDB could be outstanding compared to a on disk DB, the index structure is a critical bottleneck \cite{leisadaptive}. 
+\subsection{MMDB Indexing}
+It is mandatory to talk first about the differences between MMDB and on-disk DB, at first instance: In a MMDB Index, the main goal is to redesign the data structure and algorithm to make efficient use of \emph{ CPU } and \emph{ memory space } rather than minimize disk access, since we don't have disk of course. On the other hand, disk-oriented index structure are designed to minimize disk access and minimize disk space, this mainly because traditional database systems are CPU bounded because they spend considerable effort to avoid disk accesses.
 
-This has been copy pasted , reframe: One approach to achieving high performance in a database management system is to store the database in main memorv rather than on disk. -One can then design new data structures aid algorithms oriented towards making eflicient use of CPU cycles and memory space rather than minimizing disk accesses and  disk space efficiently \cite{lehman1986study}
+A Main Memory oriented index structure is designed to reduce overall computation while using as little memory as possible \cite{lehman1986study}, since everything is in memory, MMDB Index could store only pointers to tuples or structures in the main memory (the actual data) instead of storing attribute values as on-disk DB usually does, decreasing efficiently the index footprint.
 
-``Disk vs Main Memory'' : 
+ Although a MMDB system could be arranged in different ways, two main types of \emph{ Main Memory Index Structure } could be specified: Order Preserving index structures and randomized \cite{lehman1986study}. Under the order preserving group could be summarized: arrays, AVL Trees, B Trees and T-Trees. T-Tree is one of the most important and well know structure, named T-Tree after its 'T' shape. On the other randomized group falls: Chained Bucket Hashing, Linear Hashing and Extendible Hashing.
 
-Disk oriented: minimize disk access, and miminize space
-Main Memory oriented: since there is no disk access -> first concern is to reduce overall computation time, and use as less memory as possible.
+Although, the performance observed in a MMDB could be outstanding compared to a on disk DB, the index structure is a critical bottleneck \cite{leisadaptive}. The T-Tree (and one of the most developed) index technology involved in MMDB was proposed 25 years ago, and was designed based on the AVL and B Trees. Acording to \citeA{leisadaptive}, ``the dramatic processor architecture changes have rendered T-trees, like all traditional binary search trees, inefficient on modern hardware''.
+
+TODO: maybe talk about details of t-trees\ldots 
+% PV TODO: in lehman1986study there is more info about indexing and a detailed explanation of t-tree and its derived
 
 
-% Data Organization:
-% How to structure a IMDB
-% - Although a In Memory Database System could be arranged in different ways, one of the most important and well know is the T-Tree. T-Tree is named after its shape, lets put a big``T'' and a tree in this part or a tree with trees with a close-up showing a T shape  
-
-\subsection{The OLTP and OLAP Systems}
-% PV TODO: I think that we need to put something from OLTP and OLAP, there is something related in in Plattner:
-The transactional processing part of a system OLTP (Online Transaction Processing) defines a Database system oriented to the day to day work. Almost all systems (Financial, Manufacturing, Sales, etc) rely on transactions to perform their goals. On the other hand, systems for decision taking, analytical and planning in general has been isolated from OLTPs toward specialized systems called OLAP (Online Analytical Processing).
-
-The main purposes of this separation could be generalized into \emph{ performance } and maybe \emph{technical} issues. Even though both systems keep the essence in terms of relational theory, there are some important differences between them \cite{Plattner}.
-
-In the IMDB Systems 
-
-\subsection{IMDB Data Organization}
 \subsubsection{Column-Store Database System}
-Is a good idea to do this for IMDB?. I have some articles in \cite{ColumnOriented} and in \cite{ColumnOriented1}.
+
+Column-oriented databases are based on vertical partitioning by columns, this is not a new idea, Column-oriented store where considered around 70s. The core of the functioning is based in the fact that each column is stored separately, having the logical scheme built around unique positioning keys \cite{krueger2011main}. This vertical data organization offers particular advantages to reading fewer attributes. According to \cite{Plattner}, in real world applications, ``only 10\% of the attributes of a single table are typically used in one SQL statement'', this could imply that: if during requests no unnecessary columns must be read, we could just use the columns independently of the related column attributes. Row oriented structures on hard drives normally can't perform this independence.
+
+As a first premise, recent improvements in parallel processing of modern CPUs, could lead to think that a column oriented approach today seems to be ideal. The Column oriented storage has the following advantages: 
+
+\begin{itemize}
+  \item Column Store performs outstanding on modern CPUS.
+
+  \item The Storage model is based on vertical fragmentation.
+
+  \item Column Store Allow data compression
+
+  \item Better memory consumption performance
+
+  \item Data arranged in columns are better suited for parallel processing because of its independence.
+
+\end{itemize}
+   
+Although, column oriented storage presents a lot of interesting features, it's worth to mention that there are also some drawbacks that kept this technology behind row oriented storage: for example: Column stores are expensive to update, but also having all data in main memory overcomes this limitation. Also column store increases seek time, but this is a concern only for on-disk DB systems.
 
 From \cite{Plattner}, it seems that although more memory has been always useful, the database systems for OLTP where not well adopted in parallel environments, one of the reasons of this were problems like deadlocks and temporary locking in parallel transactions. So in general terms has not been a good idea. Really? review this since Plattner is one of the pro Column Oriented store.
 
 Also from \cite{Plattner}, initial tests regarding in-memory databases using relational type based on \emph{ row storage } has not shown notable performance over RDBMSs. The opportunity for \emph{column based storage} now raises due the abundant availability of main memory. 
 
-Column-oriented databases are based on vertical partitioning by columns, this is not a new idea, Column-oriented store where considered around 70s. The core of the functioning is based in the fact that each column is stored separately, having the logical scheme built around unique positioning keys \cite{krueger2011main}. This vertical data organization offers particular advantages to reading fewer attributes, because during requests no unnecessary columns must be read, this is normally the case in row-oriented structures on hard drives.
+Compression is another characteristic that Column-oriented ease. The redundancy of column store and the homogeneous domain is an advantage and a convenience for compression techniques. All the data within a column belongs to the same type, and the entropy\footnote{The entropy could be defined as the similarities of data} is relatively low. 
 
-Compression is another characteristic that Column-oriented ease. The redundancy of column store and the homogeneous domain is an advantage and a convenience for compression techniques. All the data within a column belongs to the same type, and the entropy\footnote{The semantic similarities of data} is relatively low. 
+TODO: talk more about column oriented, put some graphics
 
-Some of the main advantages of Column Storage worth to mention:
-\begin{itemize}
-    \item Column Storage performs outstanding on modern CPUS (see \cite{Plattner})
-    \item The vertical compression along columns is more efficient.
-  \end{itemize}
-
-\subsection{IMDB Query Processing}
 \subsection{IMDB Data Recovery}
 
 % PV: stupid idea: the memory comsumption is high since IDBM is memory based, but, OS Systems like Unix uses as much memory as they can in order to be more efficient, after coping all the memory, they start to swap and problems like trashing could happen.
 % PV: stupid idea2: In a computer, all the memory has to be used because is already payed, the resource is there so take as much memory as you can.
 
-% This is the point about conclusions and future directions
 \section{Conclusions} 
-The conclusions.
+
+% This is the point about conclusions and future directions
+\subsection{Conclusion regarding OLTP and OLAP merging}
+
+
+
 
 We could talk about: \emph{ MonetDB }, \emph{ VoltDB }
 
