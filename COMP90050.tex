@@ -20,6 +20,8 @@
 \documentclass[10pt]{article} % Default font size is 12pt, it can be changed here
 
 \usepackage{geometry} % Required to change the page size to A4
+
+\geometry{margin=1in} % Required to change the margin to 1 - in on all sides
 \geometry{a4paper} % Set the page size to be A4 as opposed to the default US Letter
 
 \usepackage{graphicx} % Required for including pictures
@@ -35,11 +37,13 @@
 
 \usepackage{longtable} % long tables breaking on each page 
 
-\linespread{1.2} % Line spacing
+\linespread{1} % Line spacing to 1 line
 
 %\setlength\parindent{0pt} % Uncomment to remove all indentation from paragraphs
 
 \graphicspath{{./pictures/}} % Specifies the directory where pictures are stored
+
+\usepackage{wrapfig} % wraps the texts with the figure 
 
 \begin{document}
 
@@ -64,9 +68,9 @@
 \begin{minipage}{0.4\textwidth}
 \begin{flushleft} \large
 \emph{Authors:}\\
-Hammad \\
+Hammad Javed\\
 Iván Patricio \textsc{Valarezo}\\ % Your name
-Saman \\
+Saman Bonab\\
 \end{flushleft}
 \end{minipage}
 ~
@@ -106,14 +110,53 @@ ID: \textsc{601099} %
 %------------------------------------------------------------------------------------
 \begin{abstract}
 
-Here we need to put the abstract of the work done.
+Main Memory Databases (MMDB), which are also referred to as In Memory Databases (IMDB), store their complete data inside RAM which adds to performance of the applications linked to the database. These special type of databases are often misinterpreted as the conventional on disk database, which is optimized for disk I/O, residing in the physical memory. However in contrast, the MMDBs use other techniques for performance in data structures, access methods and durability. These types of databases are best suited for real time embedded applications as well as Business Enterprise solutions which process massive amounts of data. This report discusses briefly the limitations of traditional on disk or Disk Resident Databases (DRDB), optimization techniques used by MMDBs to overcome these limitations including data organization along with methods to ensure reliability within MMDBs. 
  
 \end{abstract}
 
 
 \section{Introduction} 
 
-The main Introduction.
+Since the inception of computing there are mainly two trends which has significant effects on IT \cite{king2011}.According to Moore’s law \cite{gray1993transaction} the processing power doubles every 18 to 24 months, this trend has held for almost half a century with no sign of fading. 
+
+As the increase in the processing power came with decrease in cost, the number of people adapting to computing has soared with leaps. This necessitates the evolution in the field and resulted in the creation of a whole set of smart and intelligent devices to perform the computations. 
+
+More computations and involvements in almost every strata of life from medical to military and space means more data to be processed and its exponential increase. Which tends to be the other driving trend in IT. This implies the processing of larger data by applications and in some cases where speed and time is crucial (real time systems).
+
+Unfortunately the ever increase in processing speed is not linear with respect to other computing components especially storage systems \cite{boncz1999database}. In fact the storage is the bottleneck for their high latency for high volume data processing real time applications. 
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \begin{center}
+    \includegraphics[width=0.4\textwidth]{./pictures/Fig1}
+  \end{center}
+  \caption{Hierarchical Memory System}
+\end{wrapfigure}
+
+Hard Disk drives are the cheaper, scalable and reliable solution for data storage but due to mechanical parts involved in the data access it has considerable latency issues as compared to other storage media and thus lies at the bottom of the storage hierarchy in terms of performance (Figure 1).
+
+RAM or DRAM lies below high speed L1/L2 cache or SRAM but above any other storage medium in memory hierarchy system categorized as increase in performance from bottom to top as shown in figure 1. Since the SRAM cannot be extended in size due to hardware limitations therefore DRAM or RAM is the ideal candidate for data storage.
+
+Solid State Drives (SSDs) are nowadays another popular and widely used data storage devices in systems all over the world. Embedded and real time systems and even personal computers and laptops utilize their low latency data access features for specific applications. Since no moving part is included in SSDs, they outperform the hard disks in terms of disk I/O operations resulting in better responsiveness \cite{Mcobject-Myths}. Even though these NAND based devices are faster and better in performance than hard disks but they are nowhere near to DRAMs amazing speeds \cite{ssds}. 
+
+\begin{description}
+  \item[Definition] As the name implies Main Memory Databases MMDB or In Memory Databases (IMDB) is a database management system which stores the complete database on physical memory or RAM. 
+\end{description}
+
+\subsection{History}
+Most people argue in memory computing to be a relatively new and unproven technology. This is a myth rather than fact. For ages caching mechanisms is being used in traditional DRDBs which involves the most frequent use data inside RAM for fast access \cite{Mcobject-Myths} . In addition in-memory tables feature have also been part of some DBMS to hold data inside Main Memory. Also the use of DRDBs in main memory was a practice carried out to get better response times. 
+
+This entails that MMDB are not new and considerable work has been done in this regard in 1980s. However they were not popular as the cost of memory and other limitations related to persistence of data were considered a problem. Many experimental MMDBs were developed then like MARS, HALO and MM-DBMS as part of research along with commercial systems like IBM Fastpath \cite{garcia1992main}. 
+
+As of today IBM, Oracle and SAP being the top database vendors in the market have acquired the companies which were developing and marketing in memory database solutions \cite{pressRgiants}. Gartner\footnote{Gartner, Inc. is an American information technology research and advisory firm head-quartered in Stamford, Connecticut, United States} has placed In Memory computing as part of \emph{Top ten technology trends for 2013} \cite{gartner}. This clearly indicates the increase in the demand of MMDBs in market and their adaptation to the solutions in coming years.  
+
+\subsection{Bounds of MMDBs}
+MMDBs with their high performance mechanisms are the perfect contenders for embedded systems \cite{graves2002memory}. These systems with the evolution of smarter devices and expanding feature set needs to manage complex data structures which while written from ground up will require extra effort. With MMDBs pointer style low latency data access and simpler optimization techniques the embedded system developers have less things to worry about, stepping MMDBs adaptation to these types of systems. These systems include set-top boxes, network switches and consumer electronics. 
+
+The real-time systems require time-critical access to and processing of massive amounts data. Example applications that handle large amounts of data and have stringent timing requirements include telephone switching, radar tracking and others. Furthermore as stated by \cite{ilprints39}, the real time database system design must not contain latency components like disk I/O operations, massage passing or garbage collection. Thus MMDBs architecture fits perfectly into the real-time application scenario. 
+
+The role of the MMDBs has greatly expanded over the last couple of years as high-end 64-bit servers can now accommodate databases that are quite large – even terabytes in size. Therefore the applications for large IMDBs further include many popular large-scale Web applications and social networking sites. 
+
+Nowadays, the data within an enterprise is distributed throughout a wide range of applications and stored in disjoint locations. Analytical reporting with amalgamated view on the data as a whole is a cumbersome and time-consuming process. Besides these reports are not entirely based on the operational data, but on combined data from a data warehouse by transforming it through ETL\footnote{ETL (Extract, Transform and Load) is a process in data warehousing responsible for pulling data out of the source systems and placing it into a data warehouse}process. Hasso has pointed out in \cite{plattner2011memory} that In-Memory data management assists the analytical operations resulting in planning, forecasting and faster decision making by separating it from operational data processing. Thus resulting in innovative and hybrid style of enterprise applications residing partially or fully in memory. 
 
 %------------------------------------------------------------------------------------
 %	Background and Analysis <-- TODO: is the name for this section accurate? 
@@ -122,6 +165,29 @@ The main Introduction.
 % - Data Organization
 % - Query Processing
 % - Data Recovery
+
+\section{MMDB vs. DRDB : A Comparison}
+A Main Memory Database Management System eliminates the most expensive Disk I/O operations which are the bottle neck in traditional DRDBs. The complete database resides inside RAM. However the question here arises \emph{Putting a DRDB in main memory will deliver us the same performance results as a MMDB} or \emph{MMDBs are the same traditional databases inside RAM}. This notion is not true at all. Although the traditional DRDB inside main memory out performs its instance on disk but while its comparison with pure MMDB the performance gap is far too much \cite{Mcobject-ramdisk}. Linux systems and now windows as well have the capability to create a RAM disk (File system inside the main memory). But a traditional DRDB deployed on such a virtually fast hard drive doesn't provide the same benefits of a pure MMDB. In-memory databases are less complex than their on disk counterparts fully deployed in physical memory and thus require minor usage of processing cycles and RAM.
+
+Another popular feature which most database providers provide in their DBMSs are the creation of memory tables, through which certain tables can be designated for all-in-memory handling \cite{Mcobject-Myths}. So does this mean that \emph{with these memory features, DRDBs can compete with MMDBs performance?}. Not really as the problem remains the same as memory tables not only don't change the database design assumptions but also have certain additional restrictions. For example, in MySQL, memory tables cannot contain BLOB or TEXT columns and the maximum table size is fixed. Furthermore in contrast to MMDBs, the space that is freed up by deletion of tuples in an in-memory relation can only be used by the same relation, which is wastage of precious space inside RAM.
+
+Comparing MMDBs with DRDBs we can find at least 4 key differences:
+
+\begin{itemize}
+\item Cache Maintenance
+\item Data Transfer
+\item Transaction Logging
+\item Concurrency Control 
+\end{itemize}
+
+\subsection{Cache Maintenance}
+\subsection{Data Transfer}
+\subsection{Transaction Logging}
+\subsection{Concurrency Control}
+\section{Characteristics/Strong points of MMDB}
+\section{Issues in MMDBs}
+
+
 
 \section{Background and Analysis} 
 \subsection{Concepts}
@@ -140,6 +206,8 @@ Let's put here something related with the main concerns that leads to this emerg
 % IVAN: New content added from the new task split between our team mates:
 % - My part begins with Indexing, this is not part of the data organization??, yes so I shall start with data organization.
 % - Actually it is, because we have organized the structure as this document know explains, follow this document structure please.
+
+
 \section{Data Organization}
 
 Relational Databases have been the backbone of business applications for more  than 20 years, trying to provide companies with a management information system for a set of applications. During all this time, we have dreamed with the possibility of having all the information at our fingertip, we even have sold this idea\cite{Plattner}.
