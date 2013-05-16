@@ -25,6 +25,8 @@
 \geometry{a4paper} % Set the page size to be A4 as opposed to the default US Letter
 
 \usepackage{graphicx} % Required for including pictures
+\usepackage{caption}
+\usepackage{subcaption}
 
 \usepackage{float} % Allows putting an [H] in \begin{figure} to specify the exact location of the figure
 \usepackage{wrapfig} % Allows in-line images such as the example fish picture
@@ -102,8 +104,10 @@ ID: \textsc{601099} %
 %------------------------------------------------------------------------------------
 %	TABLE OF CONTENTS
 %------------------------------------------------------------------------------------
-
+\tableofcontents
+\listoffigures
 \newpage % Begins the essay on a new page instead of on the same page as the table of contents 
+
 
 %------------------------------------------------------------------------------------
 %	INTRODUCTION
@@ -130,13 +134,13 @@ Unfortunately the ever increase in processing speed is not linear with respect t
     \includegraphics[width=0.4\textwidth]{./pictures/Fig1}
   \end{center}
   \caption{Hierarchical Memory System}
+  \label{fig:fig1}
 \end{wrapfigure}
 
 Hard Disk drives are the cheaper, scalable and reliable solution for data storage but due to mechanical parts involved in the data access it has considerable latency issues as compared to other storage media and thus lies at the bottom of the storage hierarchy in terms of performance (Figure 1).
 
 RAM or DRAM lies below high speed L1/L2 cache or SRAM but above any other storage medium in memory hierarchy system categorized as increase in performance from bottom to top as shown in figure 1. Since the SRAM cannot be extended in size due to hardware limitations therefore DRAM or RAM is the ideal candidate for data storage.
 
-Solid State Drives (SSDs) are nowadays another popular and widely used data storage devices in systems all over the world. Embedded and real time systems and even personal computers and laptops utilize their low latency data access features for specific applications. Since no moving part is included in SSDs, they outperform the hard disks in terms of disk I/O operations resulting in better responsiveness \cite{Mcobject-Myths}. Even though these NAND based devices are faster and better in performance than hard disks but they are nowhere near to DRAMs amazing speeds \cite{ssds}. 
 
 \begin{description}
   \item[Definition] As the name implies Main Memory Databases MMDB or In Memory Databases (IMDB) is a database management system which stores the complete database on physical memory or RAM. 
@@ -167,40 +171,133 @@ Nowadays, the data within an enterprise is distributed throughout a wide range o
 % - Data Recovery
 
 \section{MMDB vs. DRDB : A Comparison}
-A Main Memory Database Management System eliminates the most expensive Disk I/O operations which are the bottle neck in traditional DRDBs. The complete database resides inside RAM. However the question here arises \emph{Putting a DRDB in main memory will deliver us the same performance results as a MMDB} or \emph{MMDBs are the same traditional databases inside RAM}. This notion is not true at all. Although the traditional DRDB inside main memory out performs its instance on disk but while its comparison with pure MMDB the performance gap is far too much \cite{Mcobject-ramdisk}. Linux systems and now windows as well have the capability to create a RAM disk (File system inside the main memory). But a traditional DRDB deployed on such a virtually fast hard drive doesn't provide the same benefits of a pure MMDB. In-memory databases are less complex than their on disk counterparts fully deployed in physical memory and thus require minor usage of processing cycles and RAM.
+In MMDBs, since the complete database physically resides inside Main Memory, a Main Memory Database Management System eliminates the most expensive Disk I/O operations which are the performance bottle neck in traditional DRDBs\footnote{Disk Resident Databases. Throughout this report we will use the terms “Disk-Resident”, “on-disk” and “disk-based” interchangeably to refer to traditional DBMSs that are “hard-wired” to store records to a file system on persistent media. While this media is usually a hard disk, it can also be a flash memory stick, solid state drive (SSD) or some other storage.}. Before delving deeper into variances it is pertinent to mention few important common questions and myths about MMDBs’.
+
+\emph{Putting a DRDB in main memory will deliver us the same performance results as a MMDB} or \emph{MMDBs are the same traditional databases inside RAM}. This notion is not true at all. Although the traditional DRDB inside main memory out performs its instance on disk but while its comparison with pure MMDB the performance gap is far too much \cite{Mcobject-ramdisk}. Linux systems and now windows as well have the capability to create a RAM disk (File system inside the main memory). But a traditional DRDB deployed on such a virtually fast hard drive doesn't provide the same benefits of a pure MMDB. In-memory databases are less complex than their on disk counterparts fully deployed in physical memory and thus require minor usage of processing cycles and RAM.
 
 Another popular feature which most database providers provide in their DBMSs are the creation of memory tables, through which certain tables can be designated for all-in-memory handling \cite{Mcobject-Myths}. So does this mean that \emph{with these memory features, DRDBs can compete with MMDBs performance?}. Not really as the problem remains the same as memory tables not only don't change the database design assumptions but also have certain additional restrictions. For example, in MySQL, memory tables cannot contain BLOB or TEXT columns and the maximum table size is fixed. Furthermore in contrast to MMDBs, the space that is freed up by deletion of tuples in an in-memory relation can only be used by the same relation, which is wastage of precious space inside RAM.
+
+\emph{ IMDS Performance Can Be Obtained By Deploying a Traditional DBMS on a Solid-State Drive (Flash)}. Solid State Drives (SSDs) are nowadays another popular and widely used data storage devices in systems all over the world. Embedded and real time systems and even personal computers and laptops utilize their low latency data access features for specific applications. Since no moving part is included in SSDs, they outperform the hard disks in terms of disk I/O operations resulting in better responsiveness for database operations \cite{Mcobject-Myths} but other performance drains in the form of caching, disk I/O, data transfer etc will remain there. Moreover, even though these NAND based devices are faster and better in performance than hard disks but they are nowhere near to DRAMs amazing speeds \cite{ssds}. 
 
 Comparing MMDBs with DRDBs we can find at least 4 key differences:
 
 \begin{itemize}
 \item Cache Maintenance
 \item Data Transfer
-\item Transaction Logging
+\item Transaction Processing
 \item Concurrency Control 
 \end{itemize}
 
 \subsection{Cache Maintenance}
+Caching is a sophisticated mechanism that is used by all on disk traditional database management systems to improve performance due to high latency issues in hard disk. This incorporates the most accessed records to be placed inside main memory (database cache) for quick access. Sufficient overhead is involved in management of this mechanism which in case of MMDB is not required since all the data in readily available in RAM and can be accessed directly. Removal of caching logic removes the two expensive operations:
+
+\begin{itemize}
+\item Cache Synchronization : This ensures that database image in memory is synched with its physical contents on disk. Thus preventing the application to read inconsistent data. 
+
+\item Cache lookup : is another process that determines if data that is requested by the application is in cache or not. If yes then it is fetched, otherwise a cache miss occurs and the corresponding page has to be read from the disk and load in memory. Furthermore it also takes responsibility and additional logic for protection of dirty data to be read by other applications before flushing it back to the disk after the transaction commits.
+\end{itemize}
+
+
 \subsection{Data Transfer}
-\subsection{Transaction Logging}
-\subsection{Concurrency Control}
-\section{Characteristics/Strong points of MMDB}
-\section{Issues in MMDBs}
+Main performance degradation in DRDBs comes with the necessary file I/O operations that are performed on data as requested by the transactions from the application. This data undergoes extensive handling and unnecessary transfers before the application can use it as shown in \figurename{2a}. The chronological steps involved in the request can be summarized as follows by Graves in \cite{graves2002memory}:
 
+\begin{figure}
+	\centering
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{./pictures/fig3}
+		\caption{On Disk Database}
+		\label{fig:fig3a}
+	\end{subfigure}
+	\qquad \qquad
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=0.5\textwidth]{./pictures/fig4}
+		\caption{In-Memory Database}
+		\label{fig:fig3b}
+	\end{subfigure}
+	\caption{Data Transfer}\label{fig:fig3}
+\end{figure}
 
+\begin{itemize}
+\item application requests the data item from the database runtime through the database API.
 
-\section{Background and Analysis} 
-\subsection{Concepts}
-We need to put concepts, I've found a good source from (\citeA{Kemper})
+\item The database runtime instructs the filesystem to retrieve the data from the physical media.
 
-\subsection{Technology awareness}
-Let's put here something related with the main concerns that leads to this emerging technology. Also, its important to be aware that the ACID properties of DB Systems should be contrasted. In terms of each one of its meanings.
+\item The filesystem makes a copy of the data for its cache and passes another copy to the database.
+
+\item The database keeps one copy in its cache and passes another copy to the application.
+
+\item The application modifies its copy and passes it back to the database through the database API.
+
+\item The database runtime copies the modified data item back to database cache.
+
+\item The copy in the database cache is eventually written to the filesystem, where it is updated in the filesystem cache.
+
+\item Finally, the data is written back to the physical media.
+\end{itemize}
+
+In contrast the MMDB system entails little or no data transfer. The application may make copies of data in local variables but even this is not required as the MMDB system provides a direct pointer to the application, enabling it to deal with the data directly. Thus eliminating the multiple data transfer and streamlining processing . Besides cutting these extra copies saves memory and processor consumption and simplifies the design of MMDB systems. Data is copied directly from the IMDS to the application, and back from the application to the database, as shown in \figurename{2b}. Database API ensures that the data remains secure as the pointer is accessed through it. Moreover, in case of traditional databases, the cache flushed to disk require random access as data might be stored at different locations and thus adds up to the latency by disk seek, which in case of MMDBs is not a problem.
+ 
+\subsection{Transaction Processing}
+Transaction logging is a permanent feature of traditional on disk DBMS to ensure the ACID property of the database. We examine this memory-intensive processing in terms of atomicity and durability. 
 
 \begin{description}
-    % this ideas are collected from Kemper
-  \item[Atomicity] In order to achieve atomicity, the IMDB should be able to handle the effects of unsuccessful transactions. In general terms, the problem has to explicitly with the data existent in the volatile memory, since all successful transaction are in a successful state only after been committed to the logging infrastructure. % <-- PV remember, atomicity is all or nothing.
-  \item[Durability] It is clear that during a failure, the IMDB Systems has the most obvious disadvantage, (without mention the hardware based solutions like batteries and so on), so the effects of a commit must be restored on a failure, this is the principle of Durability of course. One of the ideas to accomplish this is use \emph{ redo Logging }. %<-- PV important, should be more, worth to investigate 
+\item[Atomicity] In order to achieve atomicity, DRDBs use their hard-wired logging feature. The recovery process comprises of committing or rolling back transactions from log files. The IMDB should be able to handle the effects of unsuccessful transactions. In general terms, the problem has to explicitly with the data existent in the volatile memory, since all successful transaction are in a successful state only after been committed to the logging infrastructure. In order to comply with this transactional integrity, MMDBs use before and after-images of the database. When the application commits the transaction, the memory for before images are freed and are returned to memory pool. If it decides to abort due to any reason, the before-images are restored and newly inserted images are freed to be returned to the memory pool in a very fast and efficient way as compared to DRDBs.
+
+\item[Durability] The logs are flushed to disk after transaction commits in DRDBs. The recovery process comprises of committing or rolling back transactions from log files in the event of a restart. In the event of a power or any other failure, the in-memory database image is lost forever as the memory is volatile and needs to be built again through some mechanism. This disadvantage of MMDBs suits most embedded systems like program guide application in set-top boxes which requires a connection to a satellite or cable head-end for downloading, a network switch that discovers network topology on startup, or a wireless access point that is provisioned by a server upstream. However in case of enterprise applications durability factor has to be addressed in an efficient way, as described later in this report, but it still contributes to performance degradation in MMDBs.
 \end{description}
+
+\subsection{Query Optimization}
+Traditional on Disk Database query optimizer output results which aimed at minimizing the disk I/O operations while a MMDB query optimizer has a diverse goal for reducing CPU cycles and precious main memory. 
+
+% \subsection{Concurrency Control}  will discuss it later in the paper. Hammad 
+% optimizer as well will be discussed later - hammad 
+\section{Characteristics/Strong points of MMDB}
+\begin{description}
+
+\item[Pure In Memory Database]The differences between MMDB and traditional disk-based DBMS entails that DRDBs cannot be used as MMDBs and therefore a true In-Memory DBMS has to be written from bottom to top (Mcobject RealImmitation). The underlying goal of DRDBs is the minimizing of disk I/O even at the cost of CPU cycles in contrast to MMDBs goal for minimizing CPU cycles and Memory utilization. This implies that MMDBs can use the spared CPU cycles elsewhere to address durability and in some cases to create hybrid databases. 
+
+\item[No Cache Maintenance] As already discussed in previous section, cache maintenance and management requires considerable resources which is eliminated in case of MMDBs. Cache synchronization and lookup processes adds to the function calls by processor and thus are expensive if aggregated together. MMDBs are indifferent to these mechanisms.
+
+\item[Lightweight] Being lightweight is one of the common advantages IMDBs share and are helpful in embedded systems. This kind of databases is really simple: they don't implement any of the complex mechanisms used by traditional database to speed up the disk I/O therefore a small footprint.
+Besides, as the data is readily available in memory and can be accessed by use of pointers, there is no need for storing redundant data in indexes (discussed later in data organization)
+
+\item[High Performance] is another common feature for every IMDB, because they all store the whole database in main memory, avoiding disk access and minimizing CPU cycles and memory.
+
+\item[Sound Memory Management ]Another key characteristic of Main Memory Databases are their sound memory management which derives that memory is a precious resource and needs to be looked after. This means that data alignment issues and sharing of heap memory through serialization be included in considerations for a MMDB memory manager as discussed in \cite{Mcobject-RealvsImmi}.
+
+\item[New Breed of Application] MMDBs can be used as cache managers for large DBMS instead of being the primary database of application. This resulted in new breed of OLAP and OLTP applications which enables faster ETL processes and in-memory analytics.
+
+\end{description}
+
+\section{Issues in MMDBs}
+Although MMDBs are currently the new hype but before jumping on the bandwagon few issues and limitations needs to be discussed. There are methods which address almost all of these issues. Most in-memory database vendors provide the facility to the application developer to choose required quality over others depending upon the logic and need. 
+
+\begin{description}
+\item[Scalability]. 
+According to Independent oracle users group data growth survey\cite{oracleDataGrowth}, the data growth of surveyed organizations is estimated around 25\% per year of their existing data. Is this a bad news for in-memory databases?.To overcome this problem there are two approaches
+\begin{itemize}
+\item Either get a better machine with more main memory or
+\item Use distributed architecture by adding cheap commodity machines. 
+\end{itemize}
+Problem with first one is the cost involved with the new technology and second what is the guarantee that it will keep up with the growth rate? In case of distributed architecture, there are issues pertaining to the coordination and overhead between the nodes as well as the network latency but the system can scale indefinitely. A concept of RAMCloud as discussed in \cite{ousterhout2010caseRamClouds} is a viable solution but it comes with disadvantages of energy and space along with latency in cross-datacenters replication. However according to this paper, the failure of servers will be handled by the RAMCloud cluster within the recovery time objective of 1-2 seconds. 
+
+
+\item {Durability \& High Availability}
+As RAM is a volatile memory by design and in-memory databases keep the primary copy of records in Main Memory, all the stored data is lost whenever the system is powered off due to any reason. Therefore additional measures like check-pointing, shadow-pages along with logging needs to be built in to achieve durability. Similarly to achieve high availability, replication mechanisms on some persistent medium requires further implementation. These durability means are discussed later in this report. 
+
+\item {Slow Start-up}
+All durability and High Availability mechanisms, to an in-memory database system, make the database's startup terribly slow, because the database image is not stored on the hard disk, or on another persistent memory, and it needs to be reconstruct at every reboot, for example by reading the transaction log file and repeat all the operations executed before the power off. This issue can be mitigated by snapshots. But snapshot decreases performance of database once the system is executing the snapshot \cite{Mcobject-Myths}. Built-up of hybrid systems can also address this issue along with durability and High Availability. 
+
+\item {Application Implementation}
+As discussed in section 2 there are considerable differences between DRDB and pure In-Memory database, therefore the applications built for use with traditional DRDBs has to be modified to be used with an MMDB. This makes sense as the query optimization, memory management and the trade-off in performance by durability and high availability along with no disk I/O latency has to be taken into account while developing an application for MMDB. 
+
+\item {Shared Memory for processing}
+Main memory's primary usage lies with the processor for fast access and processing. This implies that it has to share the memory with the database and thus even the database API protects the data from being accessed but still the data is vulnerable to software errors. 
+
+\end{description}
+
 
 
 % IVAN: New content added from the new task split between our team mates:
@@ -210,7 +307,7 @@ Let's put here something related with the main concerns that leads to this emerg
 
 \section{Data Organization}
 
-Relational Databases have been the backbone of business applications for more  than 20 years, trying to provide companies with a management information system for a set of applications. During all this time, we have dreamed with the possibility of having all the information at our fingertip, we even have sold this idea\cite{Plattner}.
+In this section we will discuss the common data organization and access methods used by MMDBs. Relational Databases have been the backbone of business applications for more  than 20 years, trying to provide companies with a management information system for a set of applications. During all this time, we have dreamed with the possibility of having all the information at our fingertip, we even have sold this idea\cite{Plattner}.
 
     But due to many reasons, we have not been able to offer this. And our systems have been separated in two main different groups: The online transaction processing (OLTP) and on line analytical processing (OLAP).
 
@@ -273,10 +370,116 @@ Compression is another characteristic that Column-oriented ease. The redundancy 
 
 TODO: talk more about column oriented, put some graphics
 
+\section{Concurrency Control}
+%multiversion concurrency control mechanisms 
+
 \subsection{IMDB Data Recovery}
 
 % PV: stupid idea: the memory comsumption is high since IDBM is memory based, but, OS Systems like Unix uses as much memory as they can in order to be more efficient, after coping all the memory, they start to swap and problems like trashing could happen.
 % PV: stupid idea2: In a computer, all the memory has to be used because is already payed, the resource is there so take as much memory as you can.
+
+\section{In Memory database solutions on market}
+In recent years, a number of database vendors have marketed in-memory database solutions targeting different application developers. Some aim at real time embedded systems like McObject’s eXtreme DB \cite{Mcobject-RealvsImmi}. This versatile product is available in different flavors, each addressing a particular quality of traditional DBMS e.g. transaction logging edition, High Availability edition and hybrid Fusion edition which combines all the traditional DBMS properties with performance of a true in-memory database. eXtreme DB uses R-trees for geospatial data, Patricia tries for IP/telecom, KD-trees for multi-dimensional data and Query-by-Example (QBE), B-trees and hash indexes as access methods. 
+
+The big database giant SAP has introduced its HANA database which is positioned as the core of the SAP HANA Appliance to support complex business analytical processes(OLAP) in combination with transactionally consistent operational workloads(OLTP) \cite{farber2012sap}. The in-memory computing engine allows HANA to process data stored in RAM as column and row stores according to the access patterns, allowing faster and better performance and aiding in decision making. 
+
+Oracle is offering Times Ten as In-Memory database, which can be used as a preprocessing cache for its traditional flagship RDBMS or as a stand-alone database product. TimesTen uses Hash \& T-tree indices for data representation along with transactional logging and database checkpointing as a measure to provide durability \cite{oracleTimesTen}.
+
+IBM has acquired SolidDB in 2008 and markets it as IMDB which maintains durability by keeping two separate but synchronized copies of database all the times as well as permanent log file stored on disk. It uses VTrie Indexes for Memory Tables and B+Tree for Disk tables. Recovery happens in less than one second through Hot Standby support \cite{IBMredbookSolidDB}. 
+
+ALTIBASE HDB is an in-memory database that features a hybrid (memory plus disk) architecture. It is not open source, but it is free for non-commercial use and free for small business \cite{altibaseHDB}.
+
+%-----------------------------------------------------------------
+% IVAN: big table starting here
+%-----------------------------------------------------------------
+\small 
+\begin{center}
+  \begin{longtable}{|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}
+    \caption{Summary of MMDBs}
+    \label{table:nonlin}\\
+    \hline
+    & Times Ten & SAP HANA & eXtreme DB & IBM Solid DB & Altibase HDB \\
+    \hline
+    Data Organization
+    &
+    Hash \&; T tree
+    &
+    Row Store, Column Store
+    &
+    R-trees for geospatial data, Patricia tries for IP/telecom, KD-trees for multi-dimensional data and Query-by-Example (QBE), B-trees, hash indexes
+    &
+    VTrie Indexes for Memory tables and B+tree for Disk tables
+    &
+    Spatial Indexes \\
+    \hline
+    Recovery / Durability \& High Availability
+    &
+    Blocking \&; Fuzzy Check pointing with WAL logging Synchronous \&; Asynchronous Replication
+    &
+    WAL, shadow Paging and save points
+    &
+    synchronous (2-safe) and asynchronous (1-safe) replication, with automatic failover \&; Logging
+    &
+    Checkpointing, synchronous and asynchronous, Hot standby replication 
+    &
+    checkpointing and transaction logging. \\
+    \hline
+    Concurrency Control
+    &
+    Locks \&; latches with two isolation levels
+    (Read Committed \&; Serialization)
+    &
+    MVCC in addition with a time-travel mechanism
+    &
+    MVCC
+    &
+    Pessimistic \&; optimistic concurrency control
+    &
+    MVCC \\
+    \hline
+    Support Hybrid
+    &
+    Yes
+    &
+    Yes
+    &
+    Yes
+    &
+    Yes
+    &
+    Yes \\
+    \hline
+    Cache support
+    &
+    Yes
+    &
+    Yes
+    &
+    Yes
+    &
+    Yes
+    &
+    Yes \\
+    \hline
+    OLAP Support
+    &
+    No
+    &
+    Yes
+    &
+    No
+    &
+    No
+    &
+    No \\
+    \hline
+  \end{longtable}
+\end{center}
+%--------------------- end of the example ------------------------
+\normalsize
+
+\section{Applications}
+
 
 \section{Conclusions} 
 
