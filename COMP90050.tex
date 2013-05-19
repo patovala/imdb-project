@@ -392,104 +392,160 @@ ALTIBASE HDB is an in-memory database that features a hybrid (memory plus disk) 
 %-----------------------------------------------------------------
 % IVAN: big table starting here
 %-----------------------------------------------------------------
-\small 
-\begin{center}
-  \begin{longtable}{|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}
-    \caption{Summary of MMDBs}
-    \label{table:nonlin}\\
-    \hline
-    & Times Ten & SAP HANA & eXtreme DB & IBM Solid DB & Altibase HDB \\
-    \hline
-    Data Organization
-    &
-    Hash \&; T tree
-    &
-    Row Store, Column Store
-    &
-    R-trees for geospatial data, Patricia tries for IP/telecom, KD-trees for multi-dimensional data and Query-by-Example (QBE), B-trees, hash indexes
-    &
-    VTrie Indexes for Memory tables and B+tree for Disk tables
-    &
-    Spatial Indexes \\
-    \hline
-    Recovery / Durability \& High Availability
-    &
-    Blocking \&; Fuzzy Check pointing with WAL logging Synchronous \&; Asynchronous Replication
-    &
-    WAL, shadow Paging and save points
-    &
-    synchronous (2-safe) and asynchronous (1-safe) replication, with automatic failover \&; Logging
-    &
-    Checkpointing, synchronous and asynchronous, Hot standby replication 
-    &
-    checkpointing and transaction logging. \\
-    \hline
-    Concurrency Control
-    &
-    Locks \&; latches with two isolation levels
-    (Read Committed \&; Serialization)
-    &
-    MVCC in addition with a time-travel mechanism
-    &
-    MVCC
-    &
-    Pessimistic \&; optimistic concurrency control
-    &
-    MVCC \\
-    \hline
-    Support Hybrid
-    &
-    Yes
-    &
-    Yes
-    &
-    Yes
-    &
-    Yes
-    &
-    Yes \\
-    \hline
-    Cache support
-    &
-    Yes
-    &
-    Yes
-    &
-    Yes
-    &
-    Yes
-    &
-    Yes \\
-    \hline
-    OLAP Support
-    &
-    No
-    &
-    Yes
-    &
-    No
-    &
-    No
-    &
-    No \\
-    \hline
-  \end{longtable}
-\end{center}
-%--------------------- end of the example ------------------------
+\begin{table}
+\footnotesize
+  \begin{center}
+    %\begin{longtable}{|p{2cm}|p{2cm}p{2cm}p{2cm}p{2cm}p{2cm}|}
+    \begin{tabular}{|p{2cm}|p{2cm}p{2cm}p{2cm}p{2cm}p{2cm}|}
+      \hline
+      & Times Ten & SAP HANA & eXtreme DB & IBM Solid DB & Altibase HDB \\
+      \hline
+      Data Organization
+      &
+      Hash \&; T tree
+      &
+      Row Store, Column Store
+      &
+      R-trees for geospatial data, Patricia tries for IP/telecom, KD-trees for multi-dimensional data and Query-by-Example (QBE), B-trees, hash indexes
+      &
+      VTrie Indexes for Memory tables and B+tree for Disk tables
+      &
+      Spatial Indexes \\
+      \hline
+      Recovery / Durability \& High Availability
+      &
+      Blocking \&; Fuzzy Check pointing with WAL logging Synchronous \&; Asynchronous Replication
+      &
+      WAL, shadow Paging and save points
+      &
+      synchronous (2-safe) and asynchronous (1-safe) replication, with automatic failover \&; Logging
+      &
+      Checkpointing, synchronous and asynchronous, Hot standby replication 
+      &
+      checkpointing and transaction logging. \\
+      \hline
+      Concurrency Control &Locks \&; latches with two isolation levels (Read Committed \&; Serialization)&MVCC in addition with a time-travel mechanism&MVCC&Pessimistic \&; optimistic concurrency control& MVCC \\
+      \hline
+      Support Hybrid&Yes&Yes&Yes&Yes&Yes \\
+      \hline
+      Cache support&Yes&Yes&Yes&Yes&Yes \\
+      \hline
+      OLAP Support
+      &No&Yes&No&No&No \\
+      \hline
+      %\end{longtable}
+      \end{tabular}
+      \caption{Summary of MMDBs}
+      \label{table:nonlin}
+    \end{center}
+  \end{table}
+%--------------------- end table ------------------------
 \normalsize
 
+%--------------------------------------------------------------------------------
+% SAMAN part starts here:
+%--------------------------------------------------------------------------------
+
+\section{Recovery}
+
+Since early 1980’s, that in memory databases gained attention; recovery is one of the main focuses of researches.  the characteristic of main memory database lets “master copies” or “working copies” of database be resident in memory. Main memory database requires a large amount of memory, but does not require the entire database to stored on the memory, it means in memory database systems still does the I/O process. ( a model of crash recovery ). Actually, it’s not applying the traditional concept of databases and technology that is applied to the traditional databases are not applicable to main memory databases. database recovery is among these technologies that we need to adapt it to the real time characteristic of databases. We need new algorithms and datastructures for in memory systems in order to improve system performance and efficiency. In this section we discuss or sometimes criticize the models of crash recovery that is introduced for main memory systems.
+
+\subsection{Features of crash recovery in main memory databases}
+
+We can divide the crash of database into three categories, the crash in transaction, system crash and media crash. Sometimes, the internal affairs of transaction many not reach the desired end; this type of crash is \emph{transaction crash} that results in leaving our database in an incorrect state. We do the \emph{ROLLBACK} to cure this problem, we cancel any modifications on the database by the transaction.
+
+\emph{System crash} is another type of crash, it refers to any event that causes the system to stop and as a result to restart. Hardware errors, operating system crash, DBMS error  or a power cut may be the cause of this kind of crash. It may result in incorrect state in database and it needs to clear all changes to insure data consistency.
+
+Third type of crash is \emph{media crash}. Also known as hard crash, this type of crash refers to external memory crash, such as disk crash, disk head impact and the instantaneous magnetic field interference. This kind of crash may damage part of our database and affect all the transactions that want to access this part of data. Basically, the possibility of this kind of crash is very smaller than transaction and system crash, but it is the most destructive of all.
+
+When we consider Main Memory databases, the crash recovery and causes differ from traditional ones. it is mainly in following two aspects(A model of crash recovery):
+
+\begin{enumerate}
+
+  \item The main focus is on restoring the main memory. So, crash of transaction and system should be more emphasised. media crash is like traditional disk crash and the cure is like the traditional media crash recovery and may be easier in some scenarios.
+  \item At backup step in recovery, we need to store data on our disk; so, it makes a bottleneck in efficiency of our transaction executing. Therefore, some traditional techniques may not be applicable and we need to think about some new algorithms and ideas.
+
+\end{enumerate}
+
+
+\subsection{A Model of Crash recovery by Tang Yanjun(todo: put a reference to article)}
+
+In his crash recovery model, Tang Yanjun, proposes that each record has a unique object identifier (OID) that it’s value represent offset in virtual memory and also a dat file. The database achieve consistency by switching between two arrays index of zero and one that is created by OID. all the insert, update and delete operations should be done in this array. The other concept is shadow, which is shadow of OID array. It saves OID value recorded in database after the previous transaction submits. Moreover, he suggests tow indexed arrays in main memory database to record the characteristic of the object. one is current index and the other one is shadow index. It achieves consistency by storing double-index-structure. The current index points the to current data objects and the shadow index points to object in the database committed by the last transaction.
+
+Therefore, when a crash in database occurs and database is in non-consistent state, it restores the database to the previous consistent state by executing the rollback operation. The illustration of Rollback operation is shown in figure n. When executing the Rollback, database copies the value of the shadow array to the current array.
+
+System crash makes our database on the memory to clear so our database needs to restore and reinstall from a backup version on non-volatile storage. Yanjun proposes to recover the database using the double-index structure in the model.
+
+Regarding media crash, the only solution that this model proposes is recovering the data from another disk backup files.
+
+\subsubsection{Critic on the Yanjin model}
+
+The model proposes to store the page tables on virtual memory, that at the first sight may seem good but it slows down our system. Although it made the assumption that the recovery model is for in memory databases but it didn’t take into the account that the virtual memory is much slower than main memory because it’s usually stored on disk or flash.
+
+We can say that their model is good for ``Rollback'' but it should reside on the memory rather than virtual memory. But their model lacks the efficiency and performance that is needed for System crash backup and recovery. Their idea of storing each table on virtual memory would result in a lot of I/O process and as a result, decrease on speed and efficiency of the main memory database.
+
+\subsection{A model of crash recovery by Li, Yang and Ye}
+
+In their model, Li, Yang and Ye, propose a model of crash recovery for embedded main memory databases.  Their model has been applied in a real communication system ( Crash recovery, 2012). They introduced their model for SDR base station communication system but here we try to introduce the generalized model of their model.
+
+The main memory database can be a relational database, and so the tables are relational. In these tables, there may be parent-child constraints between tables and the system should ensure the consistency of parent-child tables at any time. The new method that is proposed based on this, named flash recovery method.
+
+They propose that we have a corresponding library for each table, each of these libraries have two directories. (figure of libraries and directories ).
+
+The flash writing of the each domain is done to that domain’s library. For example, for  public domain, the data is written on the public library and in corresponding folders of “A” and “B” respectively. Moreover, there exist a “flash writing logo” to identify the progress. So, if a sudden crash happens when the system is running, the system will go to the correct flash directory to load data in order to ensure the data integrity after restart. You can see the flash writing and recovery proccess in figure a and b.
+
+\subsubsection{Critic on the Li,Yang and Ye model}
+
+In our opinion, in their paper they used checkpointing with another name and by duplicating the stored data they brought the RAID hardware system into software with less efficiency.
+
+The main idea is to duplicate data, they do this in a sequential way and with control with software. backing up should be done in less time as possible to minimize the risk of system crash in the time of backup. When they do it in sequential way, it will oppose the system to the risk of crash.
+
+if we say that the probability of crash in each second would be ($\alpha$) and the time that system is doing one backup is equal to t. then:\\
+
+Probability that the system crashes when we do one backup on raid system:
+\begin{equation}
+ t*(\alpha) = (probability)
+\end{equation}
+
+Probability that the system crashes when we do two sequential backups:
+
+\begin{equation}
+ t*(\alpha)*2 = 2*(probability)
+\end{equation}
+
+So, the system is opposed to double probability of crash.
+
+All in all, they haven’t gave a complete solution for a crash scenario and what they have gave can be implemented in more efficient way and with the minimized risk.
+
+\subsection{ Discussion on recovery in database systems}
+
+
+
 \section{Applications}
+
+In-memory databases are most commonly used in applications that demand very fast data access, storage and manipulation, and also in systems that don’t typically have a disk but nevertheless must manage appreciable quantities of data.
+
+An important use for in-memory database systems is in real-time embedded systems. IMDSs running on real-time operating systems provide the responsiveness needed in applications including IP network routing, telecom switching, and industrial control. IMDSs manage music databases in MP3 players and handle programming data in set-top boxes. In-memory databases’ typically small memory and CPU footprint make them ideal because most embedded systems are highly resource-constrained.
+
+Non-embedded applications requiring exceptional performance are an important growth area for in-memory database systems. For example, algorithmic trading and other applications for financial markets use IMDSs to provide instant manipulation of data, in order to identify and leverage market opportunities. Some multi-user Web applications – such as e-commerce and social networking sites – use in-memory databases to cache portions of their back-end on-disk database systems. These enterprise-scale applications sometimes require very large in-memory data stores, and this need is met by 64-bit IMDS editions.(McObject Question and Answer about In-memory DBs)
+
+\subsection{Growth of real-time Applications}
+
+Network equipment manufacturers, telecom operators, securities exchanges and brokerages, airlines, shipping and logistics companies, and defense and intelligence agencies are examples of enterprises in which real-time applications are a necessity. The use of real-time processing to capture, analyze, and respond intelligently to key events is increasingly becoming the benchmark for corporate excellence.
+
+For many companies, real-time applications aren’t elective—they are a necessity. Network equipment manufacturers, telecom operators, securities exchanges and brokerages, airlines, shipping and logistics companies, and defense and intelligence agencies are prime examples of enterprises that require real-time applications. In the past, building these applications also required the development of real-time infrastructure software. Fast but inflexible, these systems did the job as long as the applications remained static in their requirements. But dynamic industries quickly outpace static applications, and the cost to develop, test, and maintain  specialized infrastructure software is rarely justified when commercial alternatives exist.
+
+With the growing speed of messages moving through business networks, the use of real-time processing to capture, analyze, and respond intelligently to key events is becoming the benchmark for corporate excellence. This isn’t important only for the execution and management of critical business processes. Customers expect highly tailored interactions and the utmost responsiveness from any company with which they do significant business.\\
+
+Business activity monitoring, complex event processing, RFID/sensor-based applications, Web portals, and Web services are contributing to the movement of applications to the edge of the enterprise. Configured as dynamic collections of interrelated components, these applications are part of an overall approach known as a service-oriented architecture (SOA). However, most data sources still reside in the back office, dominated by large amounts of rarely touched legacy data surrounding smaller amounts of currently active information. A natural extension of SOA concepts includes lightweight, real-time data management in the application tier, connected to corporate data sources to provide real-time performance for currently active data. ( Extreme Performance Using Oracle Times Ten In-Memory Database)
 
 
 \section{Conclusions} 
 
-% This is the point about conclusions and future directions
-\subsection{Conclusion regarding OLTP and OLAP merging}
+% This is the point about conclusions and future directions (IVAN)
+To Do: Conclusion regarding OLTP and OLAP merging, the bad news, what people says.
 
-
-
-
-We could talk about: \emph{ MonetDB }, \emph{ VoltDB }
+We could talk about: \emph{ MonetDB }, \emph{ VoltDB }??
 
 
 %------------------------------------------------------------------------------------
