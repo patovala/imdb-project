@@ -45,7 +45,6 @@
 
 \graphicspath{{./pictures/}} % Specifies the directory where pictures are stored
 
-\usepackage{wrapfig} % wraps the texts with the figure 
 
 \begin{document}
 
@@ -162,13 +161,26 @@ The role of the MMDBs has greatly expanded over the last couple of years as high
 
 Nowadays, the data within an enterprise is distributed throughout a wide range of applications and stored in disjoint locations. Analytical reporting with amalgamated view on the data as a whole is a cumbersome and time-consuming process. Besides these reports are not entirely based on the operational data, but on combined data from a data warehouse by transforming it through ETL\footnote{ETL (Extract, Transform and Load) is a process in data warehousing responsible for pulling data out of the source systems and placing it into a data warehouse}process. Hasso has pointed out in \cite{plattner2011memory} that In-Memory data management assists the analytical operations resulting in planning, forecasting and faster decision making by separating it from operational data processing. Thus resulting in innovative and hybrid style of enterprise applications residing partially or fully in memory. 
 
-%------------------------------------------------------------------------------------
-%	Background and Analysis <-- TODO: is the name for this section accurate? 
-%------------------------------------------------------------------------------------
-% Let's talk about the main topic in terms of three major parts:
-% - Data Organization
-% - Query Processing
-% - Data Recovery
+% \subsection{Concurrency Control}  will discuss it later in the paper. Hammad 
+% optimizer as well will be discussed later - hammad 
+\section{Characteristics/Strong points of MMDB}
+\begin{description}
+
+\item[Pure In Memory Database]The differences between MMDB and traditional disk-based DBMS entails that DRDBs cannot be used as MMDBs and therefore a true In-Memory DBMS has to be written from bottom to top (Mcobject RealImmitation). The underlying goal of DRDBs is the minimizing of disk I/O even at the cost of CPU cycles in contrast to MMDBs goal for minimizing CPU cycles and Memory utilization. This implies that MMDBs can use the spared CPU cycles elsewhere to address durability and in some cases to create hybrid databases. 
+
+\item[No Cache Maintenance] As already discussed in previous section, cache maintenance and management requires considerable resources which is eliminated in case of MMDBs. Cache synchronization and lookup processes adds to the function calls by processor and thus are expensive if aggregated together. MMDBs are indifferent to these mechanisms.
+
+\item[Lightweight] Being lightweight is one of the common advantages IMDBs share and are helpful in embedded systems. This kind of databases is really simple: they don't implement any of the complex mechanisms used by traditional database to speed up the disk I/O therefore a small footprint.
+Besides, as the data is readily available in memory and can be accessed by use of pointers, there is no need for storing redundant data in indexes (discussed later in data organization)
+
+\item[High Performance] is another common feature for every IMDB, because they all store the whole database in main memory, avoiding disk access and minimizing CPU cycles and memory.
+
+\item[Sound Memory Management ]Another key characteristic of Main Memory Databases are their sound memory management which derives that memory is a precious resource and needs to be looked after. This means that data alignment issues and sharing of heap memory through serialization be included in considerations for a MMDB memory manager as discussed in \cite{Mcobject-RealvsImmi}.
+
+\item[New Breed of Application] MMDBs can be used as cache managers for large DBMS instead of being the primary database of application. This resulted in new breed of OLAP and OLTP applications which enables faster ETL processes and in-memory analytics.
+
+\end{description}
+
 
 \section{MMDB vs. DRDB : A Comparison}
 In MMDBs, since the complete database physically resides inside Main Memory, a Main Memory Database Management System eliminates the most expensive Disk I/O operations which are the performance bottle neck in traditional DRDBs\footnote{Disk Resident Databases. Throughout this report we will use the terms “Disk-Resident”, “on-disk” and “disk-based” interchangeably to refer to traditional DBMSs that are “hard-wired” to store records to a file system on persistent media. While this media is usually a hard disk, it can also be a flash memory stick, solid state drive (SSD) or some other storage.}. Before delving deeper into variances it is pertinent to mention few important common questions and myths about MMDBs’.
@@ -251,26 +263,6 @@ Transaction logging is a permanent feature of traditional on disk DBMS to ensure
 \subsection{Query Optimization}
 Traditional on Disk Database query optimizer output results which aimed at minimizing the disk I/O operations while a MMDB query optimizer has a diverse goal for reducing CPU cycles and precious main memory. 
 
-% \subsection{Concurrency Control}  will discuss it later in the paper. Hammad 
-% optimizer as well will be discussed later - hammad 
-\section{Characteristics/Strong points of MMDB}
-\begin{description}
-
-\item[Pure In Memory Database]The differences between MMDB and traditional disk-based DBMS entails that DRDBs cannot be used as MMDBs and therefore a true In-Memory DBMS has to be written from bottom to top (Mcobject RealImmitation). The underlying goal of DRDBs is the minimizing of disk I/O even at the cost of CPU cycles in contrast to MMDBs goal for minimizing CPU cycles and Memory utilization. This implies that MMDBs can use the spared CPU cycles elsewhere to address durability and in some cases to create hybrid databases. 
-
-\item[No Cache Maintenance] As already discussed in previous section, cache maintenance and management requires considerable resources which is eliminated in case of MMDBs. Cache synchronization and lookup processes adds to the function calls by processor and thus are expensive if aggregated together. MMDBs are indifferent to these mechanisms.
-
-\item[Lightweight] Being lightweight is one of the common advantages IMDBs share and are helpful in embedded systems. This kind of databases is really simple: they don't implement any of the complex mechanisms used by traditional database to speed up the disk I/O therefore a small footprint.
-Besides, as the data is readily available in memory and can be accessed by use of pointers, there is no need for storing redundant data in indexes (discussed later in data organization)
-
-\item[High Performance] is another common feature for every IMDB, because they all store the whole database in main memory, avoiding disk access and minimizing CPU cycles and memory.
-
-\item[Sound Memory Management ]Another key characteristic of Main Memory Databases are their sound memory management which derives that memory is a precious resource and needs to be looked after. This means that data alignment issues and sharing of heap memory through serialization be included in considerations for a MMDB memory manager as discussed in \cite{Mcobject-RealvsImmi}.
-
-\item[New Breed of Application] MMDBs can be used as cache managers for large DBMS instead of being the primary database of application. This resulted in new breed of OLAP and OLTP applications which enables faster ETL processes and in-memory analytics.
-
-\end{description}
-
 \section{Issues in MMDBs}
 Although MMDBs are currently the new hype but before jumping on the bandwagon few issues and limitations needs to be discussed. There are methods which address almost all of these issues. Most in-memory database vendors provide the facility to the application developer to choose required quality over others depending upon the logic and need. 
 
@@ -309,6 +301,14 @@ Main memory's primary usage lies with the processor for fast access and processi
 
 In this section we will discuss the common data organization and access methods used by MMDBs. Relational Databases have been the backbone of business applications for more  than 20 years, trying to provide companies with a management information system for a set of applications. During all this time, we have dreamed with the possibility of having all the information at our fingertip, we even have sold this idea\cite{Plattner}.
 
+\begin{wrapfigure}{R}{0.5\textwidth}
+  \begin{center}
+    \includegraphics[width=0.4\textwidth]{./pictures/fig5}
+  \end{center}
+  \caption{Management of the Future}
+  \label{fig:fig5}
+\end{wrapfigure}
+
     But due to many reasons, we have not been able to offer this. And our systems have been separated in two main different groups: The online transaction processing (OLTP) and on line analytical processing (OLAP).
 
 \subsection{OLTP and OLAP}
@@ -333,7 +333,19 @@ It is mandatory to talk first about the differences between MMDB and on-disk DB,
 
 A Main Memory oriented index structure is designed to reduce overall computation while using as little memory as possible \cite{lehman1986study}, since everything is in memory, MMDB Index could store only pointers to tuples or structures in the main memory (the actual data) instead of storing attribute values as on-disk DB usually does, decreasing efficiently the index footprint.
 
- Although a MMDB system could be arranged in different ways, two main types of \emph{ Main Memory Index Structure } could be specified: Order Preserving index structures and randomized \cite{lehman1986study}. Under the order preserving group could be summarized: arrays, AVL Trees, B Trees and T-Trees. T-Tree is one of the most important and well know structure, named T-Tree after its 'T' shape. On the other randomized group falls: Chained Bucket Hashing, Linear Hashing and Extendible Hashing.
+Although a MMDB system could be arranged in different ways, two main types of \emph{ Main Memory Index Structure } could be specified (Figure \ref{fig:fig6}): Order Preserving index structures and randomized \cite{lehman1986study}. Under the order preserving group could be summarized: arrays, AVL Trees, B Trees and T-Trees. T-Tree is one of the most important and well know structure, named T-Tree after its 'T' shape. On the other randomized group falls: Chained Bucket Hashing, Linear Hashing and Extendible Hashing.
+
+\begin{wrapfigure}{R}{0.6\textwidth}
+%  \begin{center}
+  \vspace{-20pt}
+    \centering
+    \includegraphics[width=0.4\textwidth]{./pictures/fig6}
+%  \end{center}
+  \caption{MMDB Index types}
+  \label{fig:fig6}
+  \vspace{-20pt}
+\end{wrapfigure}
+
 
 Although, the performance observed in a MMDB could be outstanding compared to a on disk DB, the index structure is a critical bottleneck \cite{leisadaptive}. The T-Tree (and one of the most developed) index technology involved in MMDB was proposed 25 years ago, and was designed based on the AVL and B Trees. Acording to \citeA{leisadaptive}, ``the dramatic processor architecture changes have rendered T-trees, like all traditional binary search trees, inefficient on modern hardware''.
 
@@ -377,70 +389,6 @@ TODO: talk more about column oriented, put some graphics
 
 % PV: stupid idea: the memory comsumption is high since IDBM is memory based, but, OS Systems like Unix uses as much memory as they can in order to be more efficient, after coping all the memory, they start to swap and problems like trashing could happen.
 % PV: stupid idea2: In a computer, all the memory has to be used because is already payed, the resource is there so take as much memory as you can.
-
-\section{In Memory database solutions on market}
-In recent years, a number of database vendors have marketed in-memory database solutions targeting different application developers. Some aim at real time embedded systems like McObject’s eXtreme DB \cite{Mcobject-RealvsImmi}. This versatile product is available in different flavors, each addressing a particular quality of traditional DBMS e.g. transaction logging edition, High Availability edition and hybrid Fusion edition which combines all the traditional DBMS properties with performance of a true in-memory database. eXtreme DB uses R-trees for geospatial data, Patricia tries for IP/telecom, KD-trees for multi-dimensional data and Query-by-Example (QBE), B-trees and hash indexes as access methods. 
-
-The big database giant SAP has introduced its HANA database which is positioned as the core of the SAP HANA Appliance to support complex business analytical processes(OLAP) in combination with transactionally consistent operational workloads(OLTP) \cite{farber2012sap}. The in-memory computing engine allows HANA to process data stored in RAM as column and row stores according to the access patterns, allowing faster and better performance and aiding in decision making. 
-
-Oracle is offering Times Ten as In-Memory database, which can be used as a preprocessing cache for its traditional flagship RDBMS or as a stand-alone database product. TimesTen uses Hash \& T-tree indices for data representation along with transactional logging and database checkpointing as a measure to provide durability \cite{oracleTimesTen}.
-
-IBM has acquired SolidDB in 2008 and markets it as IMDB which maintains durability by keeping two separate but synchronized copies of database all the times as well as permanent log file stored on disk. It uses VTrie Indexes for Memory Tables and B+Tree for Disk tables. Recovery happens in less than one second through Hot Standby support \cite{IBMredbookSolidDB}. 
-
-ALTIBASE HDB is an in-memory database that features a hybrid (memory plus disk) architecture. It is not open source, but it is free for non-commercial use and free for small business \cite{altibaseHDB}.
-
-%-----------------------------------------------------------------
-% IVAN: big table starting here
-%-----------------------------------------------------------------
-\begin{table}
-\footnotesize
-  \begin{center}
-    %\begin{longtable}{|p{2cm}|p{2cm}p{2cm}p{2cm}p{2cm}p{2cm}|}
-    \begin{tabular}{|p{2cm}|p{2cm}p{2cm}p{2cm}p{2cm}p{2cm}|}
-      \hline
-      & Times Ten & SAP HANA & eXtreme DB & IBM Solid DB & Altibase HDB \\
-      \hline
-      Data Organization
-      &
-      Hash \&; T tree
-      &
-      Row Store, Column Store
-      &
-      R-trees for geospatial data, Patricia tries for IP/telecom, KD-trees for multi-dimensional data and Query-by-Example (QBE), B-trees, hash indexes
-      &
-      VTrie Indexes for Memory tables and B+tree for Disk tables
-      &
-      Spatial Indexes \\
-      \hline
-      Recovery / Durability \& High Availability
-      &
-      Blocking \&; Fuzzy Check pointing with WAL logging Synchronous \&; Asynchronous Replication
-      &
-      WAL, shadow Paging and save points
-      &
-      synchronous (2-safe) and asynchronous (1-safe) replication, with automatic failover \&; Logging
-      &
-      Checkpointing, synchronous and asynchronous, Hot standby replication 
-      &
-      checkpointing and transaction logging. \\
-      \hline
-      Concurrency Control &Locks \&; latches with two isolation levels (Read Committed \&; Serialization)&MVCC in addition with a time-travel mechanism&MVCC&Pessimistic \&; optimistic concurrency control& MVCC \\
-      \hline
-      Support Hybrid&Yes&Yes&Yes&Yes&Yes \\
-      \hline
-      Cache support&Yes&Yes&Yes&Yes&Yes \\
-      \hline
-      OLAP Support
-      &No&Yes&No&No&No \\
-      \hline
-      %\end{longtable}
-      \end{tabular}
-      \caption{Summary of MMDBs}
-      \label{table:nonlin}
-    \end{center}
-  \end{table}
-%--------------------- end table ------------------------
-\normalsize
 
 %--------------------------------------------------------------------------------
 % SAMAN part starts here:
@@ -538,6 +486,71 @@ For many companies, real-time applications aren’t elective—they are a necess
 With the growing speed of messages moving through business networks, the use of real-time processing to capture, analyze, and respond intelligently to key events is becoming the benchmark for corporate excellence. This isn’t important only for the execution and management of critical business processes. Customers expect highly tailored interactions and the utmost responsiveness from any company with which they do significant business.\\
 
 Business activity monitoring, complex event processing, RFID/sensor-based applications, Web portals, and Web services are contributing to the movement of applications to the edge of the enterprise. Configured as dynamic collections of interrelated components, these applications are part of an overall approach known as a service-oriented architecture (SOA). However, most data sources still reside in the back office, dominated by large amounts of rarely touched legacy data surrounding smaller amounts of currently active information. A natural extension of SOA concepts includes lightweight, real-time data management in the application tier, connected to corporate data sources to provide real-time performance for currently active data. ( Extreme Performance Using Oracle Times Ten In-Memory Database)
+
+\section{In Memory database solutions on market}
+In recent years, a number of database vendors have marketed in-memory database solutions targeting different application developers. Some aim at real time embedded systems like McObject’s eXtreme DB \cite{Mcobject-RealvsImmi}. This versatile product is available in different flavors, each addressing a particular quality of traditional DBMS e.g. transaction logging edition, High Availability edition and hybrid Fusion edition which combines all the traditional DBMS properties with performance of a true in-memory database. eXtreme DB uses R-trees for geospatial data, Patricia tries for IP/telecom, KD-trees for multi-dimensional data and Query-by-Example (QBE), B-trees and hash indexes as access methods. 
+
+The big database giant SAP has introduced its HANA database which is positioned as the core of the SAP HANA Appliance to support complex business analytical processes(OLAP) in combination with transactionally consistent operational workloads(OLTP) \cite{farber2012sap}. The in-memory computing engine allows HANA to process data stored in RAM as column and row stores according to the access patterns, allowing faster and better performance and aiding in decision making. 
+
+Oracle is offering Times Ten as In-Memory database, which can be used as a preprocessing cache for its traditional flagship RDBMS or as a stand-alone database product. TimesTen uses Hash \& T-tree indices for data representation along with transactional logging and database checkpointing as a measure to provide durability \cite{oracleTimesTen}.
+
+IBM has acquired SolidDB in 2008 and markets it as IMDB which maintains durability by keeping two separate but synchronized copies of database all the times as well as permanent log file stored on disk. It uses VTrie Indexes for Memory Tables and B+Tree for Disk tables. Recovery happens in less than one second through Hot Standby support \cite{IBMredbookSolidDB}. 
+
+ALTIBASE HDB is an in-memory database that features a hybrid (memory plus disk) architecture. It is not open source, but it is free for non-commercial use and free for small business \cite{altibaseHDB}.
+
+%-----------------------------------------------------------------
+% IVAN: big table starting here
+%-----------------------------------------------------------------
+\begin{table}
+\footnotesize
+  \begin{center}
+    %\begin{longtable}{|p{2cm}|p{2cm}p{2cm}p{2cm}p{2cm}p{2cm}|}
+    \begin{tabular}{|p{2cm}|p{2cm}p{2cm}p{2cm}p{2cm}p{2cm}|}
+      \hline
+      & Times Ten & SAP HANA & eXtreme DB & IBM Solid DB & Altibase HDB \\
+      \hline
+      Data Organization
+      &
+      Hash \&; T tree
+      &
+      Row Store, Column Store
+      &
+      R-trees for geospatial data, Patricia tries for IP/telecom, KD-trees for multi-dimensional data and Query-by-Example (QBE), B-trees, hash indexes
+      &
+      VTrie Indexes for Memory tables and B+tree for Disk tables
+      &
+      Spatial Indexes \\
+      \hline
+      Recovery / Durability \& High Availability
+      &
+      Blocking \&; Fuzzy Check pointing with WAL logging Synchronous \&; Asynchronous Replication
+      &
+      WAL, shadow Paging and save points
+      &
+      synchronous (2-safe) and asynchronous (1-safe) replication, with automatic failover \&; Logging
+      &
+      Checkpointing, synchronous and asynchronous, Hot standby replication 
+      &
+      checkpointing and transaction logging. \\
+      \hline
+      Concurrency Control &Locks \&; latches with two isolation levels (Read Committed \&; Serialization)&MVCC in addition with a time-travel mechanism&MVCC&Pessimistic \&; optimistic concurrency control& MVCC \\
+      \hline
+      Support Hybrid&Yes&Yes&Yes&Yes&Yes \\
+      \hline
+      Cache support&Yes&Yes&Yes&Yes&Yes \\
+      \hline
+      OLAP Support
+      &No&Yes&No&No&No \\
+      \hline
+      %\end{longtable}
+      \end{tabular}
+      \caption{Summary of MMDBs}
+      \label{table:nonlin}
+    \end{center}
+  \end{table}
+%--------------------- end table ------------------------
+\normalsize
+
 
 
 \section{Conclusions} 
