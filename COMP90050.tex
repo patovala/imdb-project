@@ -17,7 +17,7 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %------------------------------------------------------------------------------------
 
-\documentclass[10pt]{article} % Default font size is 12pt, it can be changed here
+\documentclass[12pt]{article} % Default font size is 12pt, it can be changed here
 
 \usepackage{geometry} % Required to change the page size to A4
 
@@ -383,6 +383,13 @@ Compression is another characteristic that Column-oriented ease. The redundancy 
 TODO: talk more about column oriented, put some graphics
 
 \section{Concurrency Control}
+%multiversion concurrency control mechanisms 
+The \emph{isolation} property of database ensures that the concurrent execution of transactions results in a system state that would be obtained if transactions were executed serially, i.e. one after the other. Providing isolation is the main goal of concurrency control mechanisms that are built within database systems while improving performance through concurrent execution. This isolation can be achieved through locking. \citeauthor{gray1993transaction} presented the two phase locking protocol \cite{gray1993transaction}, which states that for every read and write operation the transaction has to take locks (Phase-1) and then release them (phase-2) to ensure seralizability. Traditional DBMS use finer locks to reduce the lock contention which occurs due to concurrency. Since access to data in memory is almost instantly therefore the locks can be taken on larger granules, like at relation level, to perform the task quickly \cite{garcia1992main}. This ensures serializability and transactions will not be deadlocked. However in case of longer transactions this becomes the bottle neck of performance. Furthermore, these granularity levels can be varied dynamically to adjust to the conflicting transactions\cite{lehman1989concurrency}.
+
+
+Multiversion concurrency control (MVCC) methods, being more robust and usually perform well, have been used for decades for variable workloads. These methods keep older versions of the objects alongwith timestamps and transaction IDs which acquire space. Since memory is precious therefore a variant of MVCC known as single version locking scheme suites best for main memory databases as discussed by \cite{larson2011high}. However in case of read only transactions this scheme underperform than other MV mechanisms as it has to acquire and release short read locks even for read-only transactions which impacts performance.
+
+
 %multiversion concurrency control mechanisms 
 
 \subsection{IMDB Data Recovery}
