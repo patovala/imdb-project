@@ -30,13 +30,8 @@
 
 \usepackage{float} % Allows putting an [H] in \begin{figure} to specify the exact location of the figure
 \usepackage{wrapfig} % Allows in-line images such as the example fish picture
-
-\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
-
 \usepackage{url} % url package
-
 \usepackage{apacite} % citations style apa 
-
 \usepackage{longtable} % long tables breaking on each page 
 
 \linespread{1} % Line spacing to 1 line
@@ -58,9 +53,9 @@
 
 \center % Center everything on the page
 
-\textsc{\LARGE University of Melbourne}\\[1.5cm] % Name of your university/college
-\textsc{\Large Advanced Database Systems}\\[0.5cm] % Major heading such as course name
-\textsc{\large COMP90050}\\[0.5cm] % Minor heading such as course title
+\textsc{\LARGE University of Melbourne}\\[1.5cm]
+\textsc{\Large Advanced Database Systems}\\[0.5cm] 
+\textsc{\large COMP90050}\\[0.5cm] 
 
 \HRule \\[0.4cm]
 { \huge \bfseries Main Memory Database Management Systems}\\[0.4cm] % Title of your document
@@ -70,15 +65,16 @@
 \begin{flushleft} \large
 \emph{Authors:}\\
 Hammad Javed\\
-Iván Patricio \textsc{Valarezo}\\ % Your name
+Iv\'an Patricio \textsc{Valarezo}\\ % Your name
 Saman Bonab\\
 \end{flushleft}
 \end{minipage}
 ~
 \begin{minipage}{0.4\textwidth}
 \begin{flushright} \large
-%\emph{id:} \\ % I want to put my id here
-ID: \textsc{601099} % 
+ID: \textsc{HammadID}
+ID: \textsc{601099} 
+ID: \textsc{SamanID}
 \end{flushright}
 \end{minipage}\\[4cm]
 
@@ -113,7 +109,7 @@ ID: \textsc{601099} %
 %------------------------------------------------------------------------------------
 \begin{abstract}
 
-Main Memory Databases (MMDB), which are also referred to as In Memory Databases (IMDB), store their complete data inside RAM which adds to performance of the applications linked to the database. These special type of databases are often misinterpreted as the conventional on disk database, which is optimized for disk I/O, residing in the physical memory. However in contrast, the MMDBs use other techniques for performance in data structures, access methods and durability. These types of databases are best suited for real time embedded applications as well as Business Enterprise solutions which process massive amounts of data. This report discusses briefly the limitations of traditional on disk or Disk Resident Databases (DRDB), optimization techniques used by MMDBs to overcome these limitations including data organization along with methods to ensure reliability within MMDBs. 
+Main Memory Databases (MMDB), which are also referred to as In Memory Databases (IMDB), store their complete data inside RAM, adding performance to the applications linked to the database. These special type of databases are often misinterpreted as the conventional \emph{on disk database}, which is optimized for disk I/O, residing in the physical memory. However in contrast, the MMDBs use other techniques for performance in data structures, access methods and durability. These types of databases are best suited for real time embedded applications as well as Business Enterprise solutions which process massive amounts of data. This report discusses briefly the limitations of traditional on disk or Disk Resident Databases (DRDB), optimization techniques used by MMDBs to overcome these limitations including data organization along with methods to ensure reliability within MMDBs. 
  
 \end{abstract}
 
@@ -299,7 +295,7 @@ Main memory's primary usage lies with the processor for fast access and processi
 
 \section{Data Organization}
 
-In this section we will discuss the common data organization and access methods used by MMDBs. Relational Databases have been the backbone of business applications for more  than 20 years, trying to provide companies with a management information system for a set of applications. During all this time, we have dreamed with the possibility of having all the information at our fingertip, we even have sold this idea\cite{Plattner}.
+Data Organization is a key point and maybe one of the main concerns to MMDBs, since Relational Databases have been the backbone of business applications for more  than 20 years, trying to provide companies with a management information system for a set of applications. During all this time, we have dreamed with the possibility of having all the information at our fingertip, we even have sold this idea\cite{Plattner}.
 
 \begin{wrapfigure}{R}{0.5\textwidth}
   \begin{center}
@@ -348,10 +344,8 @@ Although a MMDB system could be arranged in different ways, two main types of \e
 
 
 Although, the performance observed in a MMDB could be outstanding compared to a on disk DB, the index structure is a critical bottleneck \cite{leisadaptive}. The T-Tree (and one of the most developed) index technology involved in MMDB was proposed 25 years ago, and was designed based on the AVL and B Trees. Acording to \citeA{leisadaptive}, ``the dramatic processor architecture changes have rendered T-trees, like all traditional binary search trees, inefficient on modern hardware''.
-
-TODO: maybe talk about details of t-trees\ldots 
+ 
 % PV TODO: in lehman1986study there is more info about indexing and a detailed explanation of t-tree and its derived
-
 
 \subsubsection{Column-Store Database System}
 
@@ -380,7 +374,6 @@ Also from \cite{Plattner}, initial tests regarding in-memory databases using rel
 
 Compression is another characteristic that Column-oriented ease. The redundancy of column store and the homogeneous domain is an advantage and a convenience for compression techniques. All the data within a column belongs to the same type, and the entropy\footnote{The entropy could be defined as the similarities of data} is relatively low. 
 
-TODO: talk more about column oriented, put some graphics
 
 \section{Concurrency Control}
 %multiversion concurrency control mechanisms 
@@ -563,10 +556,9 @@ ALTIBASE HDB is an in-memory database that features a hybrid (memory plus disk) 
 \section{Conclusions} 
 
 % This is the point about conclusions and future directions (IVAN)
-To Do: Conclusion regarding OLTP and OLAP merging, the bad news, what people says.
+The MMDB presents a new challenge or oportunity (depends of the point of view). Taking in account the new hardware, the expected continuity of the Moore's law, and the relatively low prices of main memory, we could expect to see a grown toward MMDB systems. Although, there still are some criticism to MMDB in terms of becoming the link and dreamed merge of OLTP and OLAP systems \cite{putwhitepaper}.
 
-We could talk about: \emph{ MonetDB }, \emph{ VoltDB }??
-
+Of course, in the embeded systems field, we are optimistics about the MMDB role to the sucess of small and powerfull devices and the MMDB technology as a key point and best choice to go.
 
 %------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
