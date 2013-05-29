@@ -6,3 +6,6 @@ references
 *.log
 *.blg
 *.aux
+*.toc
+*.lof
+*.bk

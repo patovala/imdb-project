@@ -27,16 +27,11 @@
 \usepackage{graphicx} % Required for including pictures
 \usepackage{caption}
 \usepackage{subcaption}
-
+\usepackage{color}
 \usepackage{float} % Allows putting an [H] in \begin{figure} to specify the exact location of the figure
 \usepackage{wrapfig} % Allows in-line images such as the example fish picture
-
-\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
-
 \usepackage{url} % url package
-
 \usepackage{apacite} % citations style apa 
-
 \usepackage{longtable} % long tables breaking on each page 
 
 \linespread{1} % Line spacing to 1 line
@@ -58,9 +53,9 @@
 
 \center % Center everything on the page
 
-\textsc{\LARGE University of Melbourne}\\[1.5cm] % Name of your university/college
-\textsc{\Large Advanced Database Systems}\\[0.5cm] % Major heading such as course name
-\textsc{\large COMP90050}\\[0.5cm] % Minor heading such as course title
+\textsc{\LARGE University of Melbourne}\\[1.5cm]
+\textsc{\Large Advanced Database Systems}\\[0.5cm] 
+\textsc{\large COMP90050}\\[0.5cm] 
 
 \HRule \\[0.4cm]
 { \huge \bfseries Main Memory Database Management Systems}\\[0.4cm] % Title of your document
@@ -70,15 +65,16 @@
 \begin{flushleft} \large
 \emph{Authors:}\\
 Hammad Javed\\
-Ivan Patricio \textsc{Valarezo}\\ % Your name
-Saman Bonab\\
+Iv\'an Patricio \textsc{Valarezo}\\ % Your name
+Saman Abdolmohammadpour Bonab\\
 \end{flushleft}
 \end{minipage}
 ~
 \begin{minipage}{0.4\textwidth}
 \begin{flushright} \large
-%\emph{id:} \\ % I want to put my id here
-ID: \textsc{601099} % 
+ID: \textsc{606265}\\
+ID: \textsc{601099}\\ 
+ID: \textsc{591703}\\
 \end{flushright}
 \end{minipage}\\[4cm]
 
@@ -181,6 +177,33 @@ Besides, as the data is readily available in memory and can be accessed by use o
 
 \end{description}
 
+\section{Issues in MMDBs}
+Although MMDBs are currently the new hype but before jumping on the bandwagon few issues and limitations needs to be discussed. There are methods which address almost all of these issues. Most in-memory database vendors provide the facility to the application developer to choose required quality over others depending upon the logic and need. 
+
+\begin{description}
+\item[Scalability]. 
+According to Independent oracle users group data growth survey\cite{oracleDataGrowth}, the data growth of surveyed organizations is estimated around 25\% per year of their existing data. Is this a bad news for in-memory databases?.To overcome this problem there are two approaches
+\begin{itemize}
+\item Either get a better machine with more main memory or
+\item Use distributed architecture by adding cheap commodity machines. 
+\end{itemize}
+Problem with first one is the cost involved with the new technology and second what is the guarantee that it will keep up with the growth rate? In case of distributed architecture, there are issues pertaining to the coordination and overhead between the nodes as well as the network latency but the system can scale indefinitely. A concept of RAMCloud as discussed in \cite{ousterhout2010caseRamClouds} is a viable solution but it comes with disadvantages of energy and space along with latency in cross-datacenters replication. However according to this paper, the failure of servers will be handled by the RAMCloud cluster within the recovery time objective of 1-2 seconds. 
+
+
+\item {Durability \& High Availability}
+As RAM is a volatile memory by design and in-memory databases keep the primary copy of records in Main Memory, all the stored data is lost whenever the system is powered off due to any reason. Therefore additional measures like check-pointing, shadow-pages along with logging needs to be built in to achieve durability. Similarly to achieve high availability, replication mechanisms on some persistent medium requires further implementation. These durability means are discussed later in this report. 
+
+\item {Slow Start-up}
+All durability and High Availability mechanisms, to an in-memory database system, make the database's startup terribly slow, because the database image is not stored on the hard disk, or on another persistent memory, and it needs to be reconstruct at every reboot, for example by reading the transaction log file and repeat all the operations executed before the power off. This issue can be mitigated by snapshots. But snapshot decreases performance of database once the system is executing the snapshot \cite{Mcobject-Myths}. Built-up of hybrid systems can also address this issue along with durability and High Availability. 
+
+\item {Application Implementation}
+As discussed in section 2 there are considerable differences between DRDB and pure In-Memory database, therefore the applications built for use with traditional DRDBs has to be modified to be used with an MMDB. This makes sense as the query optimization, memory management and the trade-off in performance by durability and high availability along with no disk I/O latency has to be taken into account while developing an application for MMDB. 
+
+\item {Shared Memory for processing}
+Main memory's primary usage lies with the processor for fast access and processing. This implies that it has to share the memory with the database and thus even the database API protects the data from being accessed but still the data is vulnerable to software errors. 
+
+\end{description}
+
 
 \section{MMDB vs. DRDB : A Comparison}
 In MMDBs, since the complete database physically resides inside Main Memory, a Main Memory Database Management System eliminates the most expensive Disk I/O operations which are the performance bottle neck in traditional DRDBs\footnote{Disk Resident Databases. Throughout this report we will use the terms “Disk-Resident”, “on-disk” and “disk-based” interchangeably to refer to traditional DBMSs that are “hard-wired” to store records to a file system on persistent media. While this media is usually a hard disk, it can also be a flash memory stick, solid state drive (SSD) or some other storage.}. Before delving deeper into variances it is pertinent to mention few important common questions and myths about MMDBs’.
@@ -190,6 +213,8 @@ In MMDBs, since the complete database physically resides inside Main Memory, a M
 Another popular feature which most database providers provide in their DBMSs are the creation of memory tables, through which certain tables can be designated for all-in-memory handling \cite{Mcobject-Myths}. So does this mean that \emph{with these memory features, DRDBs can compete with MMDBs performance?}. Not really as the problem remains the same as memory tables not only don't change the database design assumptions but also have certain additional restrictions. For example, in MySQL, memory tables cannot contain BLOB or TEXT columns and the maximum table size is fixed. Furthermore in contrast to MMDBs, the space that is freed up by deletion of tuples in an in-memory relation can only be used by the same relation, which is wastage of precious space inside RAM.
 
 \emph{ IMDS Performance Can Be Obtained By Deploying a Traditional DBMS on a Solid-State Drive (Flash)}. Solid State Drives (SSDs) are nowadays another popular and widely used data storage devices in systems all over the world. Embedded and real time systems and even personal computers and laptops utilize their low latency data access features for specific applications. Since no moving part is included in SSDs, they outperform the hard disks in terms of disk I/O operations resulting in better responsiveness for database operations \cite{Mcobject-Myths} but other performance drains in the form of caching, disk I/O, data transfer etc will remain there. Moreover, even though these NAND based devices are faster and better in performance than hard disks but they are nowhere near to DRAMs amazing speeds \cite{ssds}. 
+
+Another emerging field 'Data Stream Management Systems' for data-intensive applications, like sensor networks, network traffic analysis, telecommunication log analysis and other similar problems has become widely recognized. These DSMS should not be confused with MMDBs. Although DSMS too utilize the characteristics of main memory but instead of querying data over a persistent storage they perform continuous queries on input data stream without storing historical data \cite{goebel2005DSMS}. However MMDBs store the data inside main memory, at times it is made persistent for future retrieval and reference as discussed earlier. 
 
 Comparing MMDBs with DRDBs we can find at least 4 key differences:
 
@@ -263,32 +288,6 @@ Transaction logging is a permanent feature of traditional on disk DBMS to ensure
 \subsection{Query Optimization}
 Traditional on Disk Database query optimizer output results which aimed at minimizing the disk I/O operations while a MMDB query optimizer has a diverse goal for reducing CPU cycles and precious main memory. 
 
-\section{Issues in MMDBs}
-Although MMDBs are currently the new hype but before jumping on the bandwagon few issues and limitations needs to be discussed. There are methods which address almost all of these issues. Most in-memory database vendors provide the facility to the application developer to choose required quality over others depending upon the logic and need. 
-
-\begin{description}
-\item[Scalability]. 
-According to Independent oracle users group data growth survey\cite{oracleDataGrowth}, the data growth of surveyed organizations is estimated around 25\% per year of their existing data. Is this a bad news for in-memory databases?.To overcome this problem there are two approaches
-\begin{itemize}
-\item Either get a better machine with more main memory or
-\item Use distributed architecture by adding cheap commodity machines. 
-\end{itemize}
-Problem with first one is the cost involved with the new technology and second what is the guarantee that it will keep up with the growth rate? In case of distributed architecture, there are issues pertaining to the coordination and overhead between the nodes as well as the network latency but the system can scale indefinitely. A concept of RAMCloud as discussed in \cite{ousterhout2010caseRamClouds} is a viable solution but it comes with disadvantages of energy and space along with latency in cross-datacenters replication. However according to this paper, the failure of servers will be handled by the RAMCloud cluster within the recovery time objective of 1-2 seconds. 
-
-
-\item {Durability \& High Availability}
-As RAM is a volatile memory by design and in-memory databases keep the primary copy of records in Main Memory, all the stored data is lost whenever the system is powered off due to any reason. Therefore additional measures like check-pointing, shadow-pages along with logging needs to be built in to achieve durability. Similarly to achieve high availability, replication mechanisms on some persistent medium requires further implementation. These durability means are discussed later in this report. 
-
-\item {Slow Start-up}
-All durability and High Availability mechanisms, to an in-memory database system, make the database's startup terribly slow, because the database image is not stored on the hard disk, or on another persistent memory, and it needs to be reconstruct at every reboot, for example by reading the transaction log file and repeat all the operations executed before the power off. This issue can be mitigated by snapshots. But snapshot decreases performance of database once the system is executing the snapshot \cite{Mcobject-Myths}. Built-up of hybrid systems can also address this issue along with durability and High Availability. 
-
-\item {Application Implementation}
-As discussed in section 2 there are considerable differences between DRDB and pure In-Memory database, therefore the applications built for use with traditional DRDBs has to be modified to be used with an MMDB. This makes sense as the query optimization, memory management and the trade-off in performance by durability and high availability along with no disk I/O latency has to be taken into account while developing an application for MMDB. 
-
-\item {Shared Memory for processing}
-Main memory's primary usage lies with the processor for fast access and processing. This implies that it has to share the memory with the database and thus even the database API protects the data from being accessed but still the data is vulnerable to software errors. 
-
-\end{description}
 
 
 
@@ -348,10 +347,8 @@ Although a MMDB system could be arranged in different ways, two main types of \e
 
 
 Although, the performance observed in a MMDB could be outstanding compared to a on disk DB, the index structure is a critical bottleneck \cite{leisadaptive}. The T-Tree (and one of the most developed) index technology involved in MMDB was proposed 25 years ago, and was designed based on the AVL and B Trees. Acording to \citeA{leisadaptive}, ``the dramatic processor architecture changes have rendered T-trees, like all traditional binary search trees, inefficient on modern hardware''.
-
-TODO: maybe talk about details of t-trees\ldots 
+ 
 % PV TODO: in lehman1986study there is more info about indexing and a detailed explanation of t-tree and its derived
-
 
 \subsubsection{Column-Store Database System}
 
@@ -380,7 +377,6 @@ Also from \cite{Plattner}, initial tests regarding in-memory databases using rel
 
 Compression is another characteristic that Column-oriented ease. The redundancy of column store and the homogeneous domain is an advantage and a convenience for compression techniques. All the data within a column belongs to the same type, and the entropy\footnote{The entropy could be defined as the similarities of data} is relatively low. 
 
-TODO: talk more about column oriented, put some graphics
 
 \section{Concurrency Control}
 %multiversion concurrency control mechanisms 
@@ -392,8 +388,6 @@ Multiversion concurrency control (MVCC) methods, being more robust and usually p
 
 %multiversion concurrency control mechanisms 
 
-\subsection{IMDB Data Recovery}
-
 % PV: stupid idea: the memory comsumption is high since IDBM is memory based, but, OS Systems like Unix uses as much memory as they can in order to be more efficient, after coping all the memory, they start to swap and problems like trashing could happen.
 % PV: stupid idea2: In a computer, all the memory has to be used because is already payed, the resource is there so take as much memory as you can.
 
@@ -403,17 +397,18 @@ Multiversion concurrency control (MVCC) methods, being more robust and usually p
 
 \section{Recovery}
 
-Since early 1980’s, that in memory databases gained attention; recovery is one of the main focuses of researches.  the characteristic of main memory database lets “master copies” or “working copies” of database be resident in memory. Main memory database requires a large amount of memory, but does not require the entire database to stored on the memory, it means in memory database systems still does the I/O process. ( a model of crash recovery ). Actually, it’s not applying the traditional concept of databases and technology that is applied to the traditional databases are not applicable to main memory databases. database recovery is among these technologies that we need to adapt it to the real time characteristic of databases. We need new algorithms and datastructures for in memory systems in order to improve system performance and efficiency. In this section we discuss or sometimes criticize the models of crash recovery that is introduced for main memory systems.
+Since early 1980’s (the time in memory databases gained attention), recovery is one of the main focuses of researches.  the characteristic of main memory database lets ``master copies'' or ``working copies'' of database be resident in memory. Main memory database requires a large amount of memory, but does not require the entire database to stored on the memory, it means in memory database systems still does the I/O process.  \cite{liangcheckpointing}. On the other hand, some technologies and methods that were applied to the traditional databases are not applicable to main memory databases. database recovery is among these technologies that it's needed to adapt it to the real time characteristic of databases. New algorithms and data-structures for in memory systems is necessary in order to improve system performance and efficiency. In remaining parts of this section, crash recovery is introduced and two models of crash recovery for main memory systems are discussed and sometimes criticised.
 
 \subsection{Features of crash recovery in main memory databases}
 
-We can divide the crash of database into three categories, the crash in transaction, system crash and media crash. Sometimes, the internal affairs of transaction many not reach the desired end; this type of crash is \emph{transaction crash} that results in leaving our database in an incorrect state. We do the \emph{ROLLBACK} to cure this problem, we cancel any modifications on the database by the transaction.
+A new idea is used when it's reliable; recovery adds reliability to database systems and ensures ACID properties. Discovering the sources of crash is the key to make a good recovery system. Crash of database can be divided into three categories, crash in transaction, system crash and media crash. 
+Sometimes, the internal affairs of transaction many not reach the desired end; this type of crash, which results in leaving our database in an incorrect state, is \emph{transaction crash}. \emph{ROLLBACK} is done to cure this problem, any modifications on the database by the transaction is cancelled.
 
-\emph{System crash} is another type of crash, it refers to any event that causes the system to stop and as a result to restart. Hardware errors, operating system crash, DBMS error  or a power cut may be the cause of this kind of crash. It may result in incorrect state in database and it needs to clear all changes to insure data consistency.
+\emph{System crash} is another type of crash, it refers to any event that causes the system to stop and as a result to restart. Hardware errors, operating system crash, DBMS error or a power cut may be the cause of this kind of crash. It may result in incorrect state in database, so it needs to clear all changes to insure data consistency.
 
-Third type of crash is \emph{media crash}. Also known as hard crash, this type of crash refers to external memory crash, such as disk crash, disk head impact and the instantaneous magnetic field interference. This kind of crash may damage part of our database and affect all the transactions that want to access this part of data. Basically, the possibility of this kind of crash is very smaller than transaction and system crash, but it is the most destructive of all.
+Third type of crash is \emph{media crash}. Also known as hard crash, this type of crash refers to external memory crash; such as: disk crash, disk head impact and the instantaneous magnetic field interference. media crash may damage a part of our database and affect all the transactions that want to access this part of data. Basically, the possibility of this kind of crash is very smaller than transaction and system crash, but it is the most destructive of all.
 
-When we consider Main Memory databases, the crash recovery and causes differ from traditional ones. it is mainly in following two aspects(A model of crash recovery):
+When Main Memory databases is considered, the crash recovery and causes differ from traditional ones. it is mainly in following two aspects \cite{liangcheckpointing}:
 
 \begin{enumerate}
 
@@ -423,37 +418,57 @@ When we consider Main Memory databases, the crash recovery and causes differ fro
 \end{enumerate}
 
 
-\subsection{A Model of Crash recovery by Tang Yanjun(todo: put a reference to article)}
+\subsection{A Model of Crash recovery by Tang Yanjun }
 
-In his crash recovery model, Tang Yanjun, proposes that each record has a unique object identifier (OID) that it’s value represent offset in virtual memory and also a dat file. The database achieve consistency by switching between two arrays index of zero and one that is created by OID. all the insert, update and delete operations should be done in this array. The other concept is shadow, which is shadow of OID array. It saves OID value recorded in database after the previous transaction submits. Moreover, he suggests tow indexed arrays in main memory database to record the characteristic of the object. one is current index and the other one is shadow index. It achieves consistency by storing double-index-structure. The current index points the to current data objects and the shadow index points to object in the database committed by the last transaction.
+In his crash recovery model \cite{yanjunmodel}, Tang Yanjun, proposes that each record has a unique object identifier (OID) that its value represent offset in virtual memory and also a data file. The database achieve consistency by switching between two arrays index of zero and one that is created by OID. all the insert, update and delete operations should be done in this array. The other concept is shadow, which is shadow of OID array. It saves OID value recorded in database after the previous transaction submits. Moreover, he suggests two indexed arrays in main memory database to record the characteristic of the object. one is current index and the other one is shadow index. It achieves consistency by storing double-index-structure. The ``current index'' points the to current data objects and the ``shadow index'' points to object in the database committed by the last transaction.
 
-Therefore, when a crash in database occurs and database is in non-consistent state, it restores the database to the previous consistent state by executing the rollback operation. The illustration of Rollback operation is shown in figure n. When executing the Rollback, database copies the value of the shadow array to the current array.
+Therefore, when a crash in database occurs and database is in non-consistent state, it restores the database to the previous consistent state by executing the rollback operation. The illustration of Rollback operation is shown in figure 5. When executing the Rollback, database copies the value of the shadow array to the current array.
 
-System crash makes our database on the memory to clear so our database needs to restore and reinstall from a backup version on non-volatile storage. Yanjun proposes to recover the database using the double-index structure in the model.
+\begin{figure}
+\centering
+\includegraphics[width=0.7\textwidth]{./pictures/YanjinModel.jpg}
+\caption{Yanjin Model - Shadow Pages}
+\label{fig:YanjinModel}
+\end{figure}
+
+System crash makes our database on the memory to clear so our database needs to restore and reinstall from a backup version on non-volatile storage. Yanjun advises to recover the database using the double-index structure in the model.
 
 Regarding media crash, the only solution that this model proposes is recovering the data from another disk backup files.
 
 \subsubsection{Critic on the Yanjin model}
 
-The model proposes to store the page tables on virtual memory, that at the first sight may seem good but it slows down our system. Although it made the assumption that the recovery model is for in memory databases but it didn’t take into the account that the virtual memory is much slower than main memory because it’s usually stored on disk or flash.
+The model proposes to store the page tables on virtual memory, that at the first sight may seem good but it slows down our system. Although Yanjin made the assumption that the recovery model is for in memory databases, but he didn't take into the account that the virtual memory is much slower than main memory because it's usually stored on disk or flash.
 
-We can say that their model is good for ``Rollback'' but it should reside on the memory rather than virtual memory. But their model lacks the efficiency and performance that is needed for System crash backup and recovery. Their idea of storing each table on virtual memory would result in a lot of I/O process and as a result, decrease on speed and efficiency of the main memory database.
+It can be said that the model is good for ``Roll-back'' but it should reside on the memory rather than virtual memory. Moreover, this model lacks the efficiency and performance which is needed for System crash backup and recovery. The idea of storing each table on virtual memory would result in a lot of I/O process and as a result, decrease on speed and efficiency of the main memory database.
 
 \subsection{A model of crash recovery by Li, Yang and Ye}
 
-In their model, Li, Yang and Ye, propose a model of crash recovery for embedded main memory databases.  Their model has been applied in a real communication system ( Crash recovery, 2012). They introduced their model for SDR base station communication system but here we try to introduce the generalized model of their model.
+In their model, Li, Yang and Ye, propose a model of crash recovery for embedded main memory databases.  Their model has been applied in a real communication system \cite{lirecovery}. They introduced their model for SDR base station communication system but here we try to introduce the generalised model of their model.
 
 The main memory database can be a relational database, and so the tables are relational. In these tables, there may be parent-child constraints between tables and the system should ensure the consistency of parent-child tables at any time. The new method that is proposed based on this, named flash recovery method.
 
-They propose that we have a corresponding library for each table, each of these libraries have two directories. (figure of libraries and directories ).
+They propose to have a corresponding library for each table, each of these libraries have two directories.(figure 6)
 
-The flash writing of the each domain is done to that domain’s library. For example, for  public domain, the data is written on the public library and in corresponding folders of “A” and “B” respectively. Moreover, there exist a “flash writing logo” to identify the progress. So, if a sudden crash happens when the system is running, the system will go to the correct flash directory to load data in order to ensure the data integrity after restart. You can see the flash writing and recovery proccess in figure a and b.
+The flash writing of the each domain is done to that domain's library. For example, for  public domain, the data is written on the public library and in corresponding folders of ``A'' and ``B" respectively. Moreover, there exist a “flash writing logo” to identify the progress. So, if a sudden crash happens when the system is running, the system will go to the correct flash directory to load data in order to ensure the data integrity after restart. You can see the flash writing and recovery process in (figure 7).
+\begin{figure}
+\centering
+\includegraphics[width=0.2\linewidth]{./pictures/LiYangYe.jpg}
+\caption{Li, Yang and Ye Recovery Model - Directory Structure}
+\label{fig:LiYangYe}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.7\linewidth]{./pictures/LiYangYeAlgorithm}
+\caption{Li, Yang and Ye Recovery Model - Backup and Recovery Algorithm}
+\label{fig:LiYangYeAlgorithm}
+\end{figure}
 
 \subsubsection{Critic on the Li,Yang and Ye model}
 
-In our opinion, in their paper they used checkpointing with another name and by duplicating the stored data they brought the RAID hardware system into software with less efficiency.
+It's obvious, in their paper they used check-pointing with another name and by duplicating the stored data they brought the RAID hardware system into software with less efficiency.
 
-The main idea is to duplicate data, they do this in a sequential way and with control with software. backing up should be done in less time as possible to minimize the risk of system crash in the time of backup. When they do it in sequential way, it will oppose the system to the risk of crash.
+The main idea is to duplicate data, they do this in a sequential way and with software control. backing up should be done in less time as possible to minimise the risk of system crash in the time of backup. When they do it in sequential way, it will oppose the system to the risk of crash.
 
 if we say that the probability of crash in each second would be ($\alpha$) and the time that system is doing one backup is equal to t. then:\\
 
@@ -470,17 +485,13 @@ Probability that the system crashes when we do two sequential backups:
 
 So, the system is opposed to double probability of crash.
 
-All in all, they haven’t gave a complete solution for a crash scenario and what they have gave can be implemented in more efficient way and with the minimized risk.
-
-\subsection{ Discussion on recovery in database systems}
-
-
+Finally, they haven't gave a complete solution for a crash scenario and what they have gave can be implemented in more efficient way and with the minimised risk.
 
 \section{Applications}
 
-In-memory databases are most commonly used in applications that demand very fast data access, storage and manipulation, and also in systems that don’t typically have a disk but nevertheless must manage appreciable quantities of data.
+In-memory databases are most commonly used in applications that demand very fast data access, storage and manipulation, and also in systems that don't typically have a disk but nevertheless must manage appreciable quantities of data.
 
-An important use for in-memory database systems is in real-time embedded systems. IMDSs running on real-time operating systems provide the responsiveness needed in applications including IP network routing, telecom switching, and industrial control. IMDSs manage music databases in MP3 players and handle programming data in set-top boxes. In-memory databases’ typically small memory and CPU footprint make them ideal because most embedded systems are highly resource-constrained.
+An important use for in-memory database systems is in real-time embedded systems. IMDSs running on real-time operating systems provide the responsiveness needed in applications including IP network routing, telecom switching, and industrial control. IMDSs manage music databases in MP3 players and handle programming data in set-top boxes. In-memory databases typically small memory and CPU footprint make them ideal because most embedded systems are highly resource-constrained.
 
 Non-embedded applications requiring exceptional performance are an important growth area for in-memory database systems. For example, algorithmic trading and other applications for financial markets use IMDSs to provide instant manipulation of data, in order to identify and leverage market opportunities. Some multi-user Web applications – such as e-commerce and social networking sites – use in-memory databases to cache portions of their back-end on-disk database systems. These enterprise-scale applications sometimes require very large in-memory data stores, and this need is met by 64-bit IMDS editions.(McObject Question and Answer about In-memory DBs)
 
@@ -488,7 +499,7 @@ Non-embedded applications requiring exceptional performance are an important gro
 
 Network equipment manufacturers, telecom operators, securities exchanges and brokerages, airlines, shipping and logistics companies, and defense and intelligence agencies are examples of enterprises in which real-time applications are a necessity. The use of real-time processing to capture, analyze, and respond intelligently to key events is increasingly becoming the benchmark for corporate excellence.
 
-For many companies, real-time applications aren’t elective—they are a necessity. Network equipment manufacturers, telecom operators, securities exchanges and brokerages, airlines, shipping and logistics companies, and defense and intelligence agencies are prime examples of enterprises that require real-time applications. In the past, building these applications also required the development of real-time infrastructure software. Fast but inflexible, these systems did the job as long as the applications remained static in their requirements. But dynamic industries quickly outpace static applications, and the cost to develop, test, and maintain  specialized infrastructure software is rarely justified when commercial alternatives exist.
+For many companies, real-time applications aren't elective — they are a necessity. Network equipment manufacturers, telecom operators, securities exchanges and brokerages, airlines, shipping and logistics companies, and defense and intelligence agencies are prime examples of enterprises that require real-time applications. In the past, building these applications also required the development of real-time infrastructure software. Fast but inflexible, these systems did the job as long as the applications remained static in their requirements. But dynamic industries quickly outpace static applications, and the cost to develop, test, and maintain  specialized infrastructure software is rarely justified when commercial alternatives exist.
 
 With the growing speed of messages moving through business networks, the use of real-time processing to capture, analyze, and respond intelligently to key events is becoming the benchmark for corporate excellence. This isn’t important only for the execution and management of critical business processes. Customers expect highly tailored interactions and the utmost responsiveness from any company with which they do significant business.\\
 
@@ -562,12 +573,15 @@ ALTIBASE HDB is an in-memory database that features a hybrid (memory plus disk) 
 
 \section{Conclusions} 
 
+We have presented the most relevant and important aspects of MMDBs, the principal concepts, characteristics and strong points of this technology. Most of them have been adopted from parallels developments (ie. Column Storage), others are improvements over new opportunities that the new hardware technology provides. Also we have reviewed the organization concepts involved in the reasons to change our current business technologies to a more centralized/manager oriented. Finally we present the maintenance issues of a day to day work with MMDB, the issues to solve and the available applications to date. 
+
 % This is the point about conclusions and future directions (IVAN)
-To Do: Conclusion regarding OLTP and OLAP merging, the bad news, what people says.
+The MMDB presents a new challenge or opportunity (depends of the point of view). MMDB Vendors claim that in-memory will replace traditional DBMS in the near future. Taking in account the new hardware, the accurate continuity of the Moore's law, and the relatively low prices of main memory, we could expect to see an important grown toward MMDB systems. Although, there are still some criticism to MMDB in terms of becoming the link and dreamed merge of OLTP and OLAP systems \cite{whitepaper}.
 
-We could talk about: \emph{ MonetDB }, \emph{ VoltDB }??
+On the other side, talking about the embedded systems field, we are optimistic about the MMDB role in the success of small and powerful devices and the MMDB technology as a key point and the best choice to go. 
 
 
+\newpage % Begins the essay on a new page instead of on the same page as the table of contents 
 %------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
 %------------------------------------------------------------------------------------
